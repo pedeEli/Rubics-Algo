@@ -1,23 +1,27 @@
 <script lang="ts">
+    import {goto} from '$app/navigation'
+
     import Back from '$lib/Back.svelte'
     import Foldout from '$lib/Foldout.svelte'
     import OLLCube from '$lib/OLLCube.svelte'
     import CubeButton from '$lib/CubeButton.svelte'
-
     import cubes from '$lib/OLLCubes'
+
+    const titles = Object.keys(cubes) as OLLSections[]
+    const names = (section: Record<OLLType, OLLProps>) => Object.keys(section) as OLLType[]
 </script>
 
 <Back href="/"/>
 <main>
     <h1>OLL</h1>
-    {#each Object.keys(cubes) as title}
+    {#each titles as title}
         {@const section = cubes[title]}
         <Foldout {title}>
             <div class="cubes">
-                {#each Object.keys(section) as name}
+                {#each names(section) as name}
                     {@const oll = section[name]}
                     <div class="cube">
-                        <CubeButton text={name}>
+                        <CubeButton text={name} on:click={() => goto(`/oll/${title}/${name}`)}>
                             <OLLCube {...oll}/>
                         </CubeButton>
                     </div>
@@ -28,12 +32,6 @@
 </main>
 
 <style>
-    main {
-        padding-block: 5rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
     .cubes {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));

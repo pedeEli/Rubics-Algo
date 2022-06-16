@@ -204,13 +204,4 @@ export default {
             "left": 1
         }
     }
-} as Record<string, Record<string, {
-    topLeft?: CornerRotation,
-    topRight?: CornerRotation,
-    bottomRight?: CornerRotation,
-    bottomLeft?: CornerRotation,
-    top?: EdgeRotation,
-    right?: EdgeRotation,
-    bottom?: EdgeRotation,
-    left?: EdgeRotation
-}>>
+} as Record<OLLSections, Record<OLLType, OLLProps>>
