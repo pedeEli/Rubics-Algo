@@ -8,3 +8,7 @@ declare namespace App {
 	// interface Session {}
 	// interface Stuff {}
 }
+
+
+type CornerRotation = 0 | 1 | 2
+type EdgeRotation = 0 | 1

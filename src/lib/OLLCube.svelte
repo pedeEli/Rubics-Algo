@@ -1,11 +1,9 @@
 <script lang="ts">
-    type CornerRotation = 0 | 1 | 2
     export let topLeft: CornerRotation = 0
     export let topRight: CornerRotation = 0
     export let bottomRight: CornerRotation = 0
     export let bottomLeft: CornerRotation = 0
 
-    type EdgeRotation = 0 | 1
     export let top: EdgeRotation = 0
     export let left: EdgeRotation = 0
     export let bottom: EdgeRotation = 0
