@@ -1,13 +1,21 @@
 <script lang="ts" context="module">
-    import type {Load} from './__types'
+    import type {Load} from './__types/[oll]'
 
     export const load: Load = async ({params, fetch}) => {
-        const data = await fetch(`/oll/${params.section}/${params.oll}/algos`)
-        const algos = await data.json()
+        const data = await fetch(`/algos/${params.oll}`)
+        if (!data.ok) {
+            return {
+                props: {
+                    ...params,
+                    algos: []
+                }
+            }
+        }
+        const algos = await data.text()
         return {
             props: {
                 ...params,
-                algos
+                algos: algos.split('\n')
             }
         }
     }
