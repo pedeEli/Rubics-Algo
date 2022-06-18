@@ -35,7 +35,7 @@ worker.addEventListener('fetch', event => {
                 return cached!
             }
             const cache = await caches.open(cacheName)
-            cache.put(event.request, response)
+            cache.put(event.request, response.clone())
             return response
         })
     )
