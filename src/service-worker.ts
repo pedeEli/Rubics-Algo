@@ -11,32 +11,38 @@ const toCache = build.concat(files, prerendered)
 worker.addEventListener('install', event => {
     event.waitUntil(caches
         .open(cacheName)
-        .then(cache => cache.addAll(toCache))
-        .then(() => worker.skipWaiting()))
+        .then(cache => cache.addAll(toCache)))
+    worker.skipWaiting()
 })
+
+const deleteCache = async (key: string) => {
+    await caches.delete(key)
+}
+  
+const deleteOldCaches = async () => {
+    const cacheKeepList = [cacheName];
+    const keyList = await caches.keys()
+    const cachesToDelete = keyList.filter(key => !cacheKeepList.includes(key))
+    await Promise.all(cachesToDelete.map(deleteCache))
+}
 
 worker.addEventListener('activate', event => {
-    event.waitUntil(caches.keys().then(async keys => {
-        for (const key in keys) {
-            if (key !== cacheName) await caches.delete(key)
-        }
-        worker.clients.claim()
-    }))
+    event.waitUntil(deleteOldCaches());
 })
-
 
 
 worker.addEventListener('fetch', event => {
     event.respondWith(
         fetch(event.request)
         .then(async response => {
-            if (!response.ok) {
-                const cached = await caches.match(event.request)
-                return cached!
-            }
             const cache = await caches.open(cacheName)
             cache.put(event.request, response.clone())
             return response
+        })
+        .catch(async () => {
+            const cache = await caches.open(cacheName)
+            const cached = await cache.match(event.request)
+            return cached!
         })
     )
 })

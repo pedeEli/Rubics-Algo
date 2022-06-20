@@ -24,3 +24,20 @@ type OLLProps = {
     bottom?: EdgeRotation,
     left?: EdgeRotation
 }
+
+
+namespace svelte.JSX {
+    interface SvelteWindowProps {
+        onbeforeinstallprompt?: EventHandler<BeforeInstallPromptEvent, Window> | undefined | null
+    }
+}
+
+
+interface BeforeInstallPromptEvent extends Event {
+    readonly platforms: Array<string>
+    readonly userChoice: Promise<{
+        outcome: 'accepted' | 'dismissed',
+        platform: string
+    }>
+    prompt(): Promise<void>
+}
