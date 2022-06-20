@@ -29,6 +29,7 @@ type OLLProps = {
 namespace svelte.JSX {
     interface SvelteWindowProps {
         onbeforeinstallprompt?: EventHandler<BeforeInstallPromptEvent, Window> | undefined | null
+        onappinstalled?: EventHandler<Event, Window> | undefined | null
     }
 }
 

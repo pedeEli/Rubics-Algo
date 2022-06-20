@@ -47,9 +47,9 @@
         grid-template-rows: .2fr 1fr 1fr 1fr .2fr;
     }
     .center {
-        background-color: lightgray;
+        background-color: hsl(var(--clr-gray-800));
     }
     .piece {
-        background: yellow;
+        background: hsl(var(--clr-yellow));
     }
 </style>

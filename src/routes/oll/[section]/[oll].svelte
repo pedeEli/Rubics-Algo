@@ -51,6 +51,6 @@
         appearance: none;
         border-radius: 1rem;
         padding: min(5vw, 1rem);
-        background: hsl(0, 0%, 33%);
+        background: hsl(var(--clr-gray-500));
     }
 </style>

@@ -47,7 +47,7 @@
         border: none;
         box-shadow: .2rem .5rem .5rem hsl(0 0% 0% / .5);
         padding: 10%;
-        background: hsl(0, 0%, 33%);
+        background: hsl(var(--clr-gray-500));
         display: grid;
         transition: filter 100ms;
         font-size: inherit;
@@ -65,7 +65,7 @@
         place-items: center;
         text-shadow: .2rem .5rem .5rem hsl(0 0% 0% / .5);
         font-weight: bold;
-        color: hsl(0 0% 95%);
+        color: hsl(var(--clr-gray-900));
     }
     button:active {
         filter: brightness(.8);
