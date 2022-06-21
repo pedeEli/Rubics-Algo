@@ -203,5 +203,19 @@ export default {
             "bottomRight": 2,
             "left": 1
         }
+    },
+    "T Shapes": {
+        "OLL 33": {
+            topLeft: 2,
+            top: 1,
+            bottom: 1,
+            bottomLeft: 1
+        },
+        "OLL 45": {
+            topLeft: 1,
+            top: 1,
+            bottom: 1,
+            bottomLeft: 2
+        }
     }
 } as Record<OLLSections, Record<OLLType, OLLProps>>

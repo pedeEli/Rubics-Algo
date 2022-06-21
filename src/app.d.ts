@@ -12,7 +12,14 @@ declare namespace App {
 
 type CornerRotation = 0 | 1 | 2
 type EdgeRotation = 0 | 1
-type OLLSections = 'All Corners Oriented' | 'All Edges Oriented' | 'L Shapes' | 'No Edges Oriented' | 'P Shapes' | 'W Shapes'
+type OLLSections =
+    'All Corners Oriented' |
+    'All Edges Oriented' |
+    'L Shapes' |
+    'No Edges Oriented' |
+    'P Shapes' |
+    'W Shapes' |
+    'T Shapes'
 type OLLType = `OLL ${number}`
 type OLLProps = {
     topLeft?: CornerRotation,
