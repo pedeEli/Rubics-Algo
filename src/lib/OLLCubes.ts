@@ -166,28 +166,28 @@ export default {
     },
     "P Shapes": {
         "OLL 31": {
-            "top": 1,
-            "topRight": 1,
-            "right": 1,
-            "bottomRight": 2
+            "topLeft": 2,
+            "bottom": 1,
+            "bottomRight": 1,
+            "right": 1
         },
         "OLL 32": {
-            "topLeft": 2,
-            "top": 1,
-            "bottomLeft": 1,
-            "left": 1
+            "topRight": 1,
+            "right": 1,
+            "bottomRight": 2,
+            "bottom": 1
         },
         "OLL 43": {
-            "top": 1,
-            "topRight": 2,
             "right": 1,
-            "bottomRight": 1
+            "bottomRight": 2,
+            "bottom": 1,
+            "bottomLeft": 1
         },
         "OLL 44": {
-            "topLeft": 1,
-            "top": 1,
-            "bottomLeft": 2,
-            "left": 1
+            "topRight": 2,
+            "right": 1,
+            "bottomRight": 1,
+            "bottom": 1
         }
     },
     "W Shapes": {
