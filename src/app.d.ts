@@ -12,7 +12,22 @@ declare namespace App {
 
 type CornerRotation = 0 | 1 | 2
 type EdgeRotation = 0 | 1
-type OLLSections = 'All Corners Oriented' | 'All Edges Oriented' | 'L Shapes' | 'No Edges Oriented' | 'P Shapes' | 'W Shapes'
+type OLLSections =
+    'All Corners Oriented' |
+    'All Edges Oriented' |
+    'No Edges Oriented' |
+    'P Shapes' |
+    'W Shapes' |
+    'T Shapes' |
+    'Square Shapes' |
+    'Fish Shapes' |
+    'C Shapes' |
+    'Small Lightning Bolts' |
+    'Big Lightning Bolts' |
+    'L Shapes' |
+    'Knight Move Shapes' |
+    'I Shapes' |
+    'Awkward Shapes'
 type OLLType = `OLL ${number}`
 type OLLProps = {
     topLeft?: CornerRotation,
