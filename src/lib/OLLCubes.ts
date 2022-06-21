@@ -217,5 +217,21 @@ export default {
             "bottom": 1,
             "bottomLeft": 2
         }
+    },
+    "Square Shapes": {
+        "OLL 5": {
+            "topRight": 2,
+            "right": 1,
+            "bottomRight": 2,
+            "bottom": 1,
+            "bottomLeft": 2
+        },
+        "OLL 6": {
+            "topLeft": 1,
+            "bottomRight": 1,
+            "bottom": 1,
+            "bottomLeft": 1,
+            "left": 1
+        }
     }
 } as Record<OLLSections, Record<OLLType, OLLProps>>
