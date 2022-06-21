@@ -192,30 +192,30 @@ export default {
     },
     "W Shapes": {
         "OLL 36": {
-            "top": 1,
-            "topRight": 2,
-            "right": 1,
-            "bottomLeft": 1
+            "topRight": 1,
+            "bottom": 1,
+            "bottomLeft": 2,
+            "left": 1
         },
         "OLL 38": {
-            "topLeft": 1,
-            "top": 1,
-            "bottomRight": 2,
-            "left": 1
+            "topLeft": 2,
+            "right": 1,
+            "bottomRight": 1,
+            "bottom": 1
         }
     },
     "T Shapes": {
         "OLL 33": {
-            topLeft: 2,
-            top: 1,
-            bottom: 1,
-            bottomLeft: 1
+            "topLeft": 2,
+            "top": 1,
+            "bottom": 1,
+            "bottomLeft": 1
         },
         "OLL 45": {
-            topLeft: 1,
-            top: 1,
-            bottom: 1,
-            bottomLeft: 2
+            "topLeft": 1,
+            "top": 1,
+            "bottom": 1,
+            "bottomLeft": 2
         }
     }
 } as Record<OLLSections, Record<OLLType, OLLProps>>
