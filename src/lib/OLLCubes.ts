@@ -1,4 +1,4 @@
-export default {
+const oll: Record<OLLSections, Record<OLLType, OLLProps>> = {
     "All Corners Oriented": {
         "OLL 20": {
             "top": 1,
@@ -168,8 +168,8 @@ export default {
         "OLL 31": {
             "topLeft": 2,
             "bottom": 1,
-            "bottomRight": 1,
-            "right": 1
+            "bottomLeft": 1,
+            "left": 1
         },
         "OLL 32": {
             "topRight": 1,
@@ -233,5 +233,35 @@ export default {
             "bottomLeft": 1,
             "left": 1
         }
+    },
+    "Fish Shapes": {
+        "OLL 9": {
+            "topLeft": 1,
+            "topRight": 1,
+            "right": 1,
+            "bottom": 1,
+            "bottomLeft": 1
+        },
+        "OLL 10": {
+            "topLeft": 2,
+            "topRight": 2,
+            "right": 1,
+            "bottom": 1,
+            "bottomLeft": 2
+        },
+        "OLL 35": {
+            "top": 1,
+            "topRight": 2,
+            "bottomLeft": 1,
+            "left": 1
+        },
+        "OLL 37": {
+            "topRight": 2,
+            "right": 1,
+            "bottom": 1,
+            "bottomLeft": 1
+        }
     }
-} as Record<OLLSections, Record<OLLType, OLLProps>>
+}
+
+export default oll
