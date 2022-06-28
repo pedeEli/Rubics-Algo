@@ -261,6 +261,20 @@ const oll: Record<OLLSections, Record<OLLType, OLLProps>> = {
             "bottom": 1,
             "bottomLeft": 1
         }
+    },
+    "C Shapes": {
+        "OLL 34": {
+            "topLeft": 2,
+            "right": 1,
+            "bottomLeft": 1,
+            "left": 1
+        },
+        "OLL 46": {
+            "topRight": 2,
+            "right": 1,
+            "bottomRight": 1,
+            "left": 1
+        }
     }
 }
 
