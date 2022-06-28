@@ -275,6 +275,36 @@ const oll: Record<OLLSections, Record<OLLType, OLLProps>> = {
             "bottomRight": 1,
             "left": 1
         }
+    },
+    "Small Lightning Bolts": {
+        "OLL 7": {
+            "topLeft": 2,
+            "topRight": 2,
+            "right": 1,
+            "bottomRight": 2,
+            "bottom": 1
+        },
+        "OLL 8": {
+            "topLeft": 1,
+            "topRight": 1,
+            "bottom": 1,
+            "bottomLeft": 1,
+            "left": 1
+        },
+        "OLL 11": {
+            "topLeft": 2,
+            "right": 1,
+            "bottomRight": 2,
+            "bottom": 1,
+            "bottomLeft": 1
+        },
+        "OLL 12": {
+            "topRight": 1,
+            "bottomRight": 1,
+            "bottom": 1,
+            "bottomLeft": 1,
+            "left": 1
+        }
     }
 }
 
