@@ -51,55 +51,6 @@ const oll: Record<OLLSections, Record<OLLType, OLLProps>> = {
             "bottomRight": 2
         }
     },
-    "L Shapes": {
-        "OLL 47": {
-            "topLeft": 2,
-            "topRight": 2,
-            "bottomRight": 1,
-            "bottom": 1,
-            "bottomLeft": 1,
-            "left": 1
-        },
-        "OLL 48": {
-            "topLeft": 1,
-            "topRight": 1,
-            "right": 1,
-            "bottomRight": 2,
-            "bottom": 1,
-            "bottomLeft": 2
-        },
-        "OLL 49": {
-            "topLeft": 2,
-            "top": 1,
-            "topRight": 2,
-            "right": 1,
-            "bottomRight": 1,
-            "bottomLeft": 1
-        },
-        "OLL 50": {
-            "topLeft": 1,
-            "top": 1,
-            "topRight": 1,
-            "bottomRight": 2,
-            "bottomLeft": 2,
-            "left": 1
-        },
-        "OLL 53": {
-            "topRight": 2,
-            "right": 1,
-            "bottomRight": 1,
-            "bottom": 1,
-            "bottomLeft": 2
-        },
-        "OLL 54": {
-            "topLeft": 1,
-            "topRight": 2,
-            "bottomRight": 1,
-            "bottom": 1,
-            "bottomLeft": 2,
-            "left": 1
-        }
-    },
     "No Edges Oriented": {
         "OLL 1": {
             "topLeft": 1,
@@ -318,6 +269,56 @@ const oll: Record<OLLSections, Record<OLLType, OLLProps>> = {
             "topRight": 2,
             "bottom": 1,
             "bottomLeft": 1
+        }
+    },
+    "L Shapes": {
+        "OLL 47": {
+            "topLeft": 2,
+            "topRight": 1,
+            "right": 1,
+            "bottomRight": 1,
+            "bottom": 1,
+            "bottomLeft": 2
+        },
+        "OLL 48": {
+            "topLeft": 1,
+            "topRight": 1,
+            "right": 1,
+            "bottomRight": 2,
+            "bottom": 1,
+            "bottomLeft": 2
+        },
+        "OLL 49": {
+            "topLeft": 1,
+            "topRight": 1,
+            "bottomRight": 2,
+            "bottom": 1,
+            "bottomLeft": 2,
+            "left": 1
+        },
+        "OLL 50": {
+            "topLeft": 2,
+            "topRight": 2,
+            "right": 1,
+            "bottomRight": 1,
+            "bottom": 1,
+            "bottomLeft": 1
+        },
+        "OLL 53": {
+            "topLeft": 1,
+            "topRight": 2,
+            "right": 1,
+            "bottomRight": 1,
+            "bottom": 1,
+            "bottomLeft": 2
+        },
+        "OLL 54": {
+            "topLeft": 1,
+            "topRight": 2,
+            "bottomRight": 1,
+            "bottom": 1,
+            "bottomLeft": 2,
+            "left": 1
         }
     }
 }
