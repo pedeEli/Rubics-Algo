@@ -350,6 +350,40 @@ const oll: Record<OLLSections, Record<OLLType, OLLProps>> = {
             "bottom": 1,
             "bottomLeft": 1
         }
+    },
+    "I Shapes": {
+        "OLL 51": {
+            "topLeft": 2,
+            "top": 1,
+            "topRight": 2,
+            "bottomRight": 1,
+            "bottom": 1,
+            "bottomLeft": 2
+        },
+        "OLL 52": {
+            "topLeft": 1,
+            "topRight": 1,
+            "right": 1,
+            "bottomRight": 2,
+            "bottomLeft": 2,
+            "left": 1
+        },
+        "OLL 55": {
+            "topLeft": 2,
+            "top": 1,
+            "topRight": 1,
+            "bottomRight": 2,
+            "bottom": 1,
+            "bottomLeft": 1
+        },
+        "OLL 56": {
+            "topLeft": 1,
+            "top": 1,
+            "topRight": 2,
+            "bottomRight": 1,
+            "bottom": 1,
+            "bottomLeft": 2
+        }
     }
 }
 
