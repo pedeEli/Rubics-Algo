@@ -10,7 +10,7 @@
 </script>
 
 <main>
-    <CubeButton text="OLL" on:click={() => goto('oll')}>
+    <CubeButton text="OLL" href="/oll">
         <OLLCube
             topLeft={1}
             right={1}
@@ -18,7 +18,7 @@
             bottom={1}
         />
     </CubeButton>
-    <CubeButton text="PLL" on:click={() => goto('pll')}>
+    <CubeButton text="PLL" href="/pll">
         <OLLCube/>
     </CubeButton>
 </main>

@@ -25,7 +25,7 @@
                 {#each names(section) as name}
                     {@const oll = section[name]}
                     <div class="cube">
-                        <CubeButton text={name} on:click={() => goto(`/oll/${title}/${name}`)}>
+                        <CubeButton text={name} href="/oll/{title}/{name}">
                             <OLLCube {...oll}/>
                         </CubeButton>
                     </div>

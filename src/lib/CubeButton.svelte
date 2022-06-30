@@ -10,9 +10,10 @@
     import OLLCube from '$lib/OLLCube.svelte'
 
     export let text: string
+    export let href: string
 
     let fontSizeCh = 1
-    let button: HTMLButtonElement
+    let button: HTMLAnchorElement
     onMount(() => {
         if (!ctx || !rem)
             return
@@ -29,17 +30,17 @@
     })
 </script>
 
-<button class="cube" bind:this={button} on:click>
+<a class="cube" bind:this={button} {href}>
     <div class="background">
         <slot><OLLCube/></slot>
     </div>
     <div class="text" style="font-size: {fontSizeCh}ch;">
         {text}
     </div>
-</button>
+</a>
 
 <style>
-    button {
+    a {
         appearance: none;
         width: 100%;
         height: 100%;
@@ -67,7 +68,7 @@
         font-weight: bold;
         color: hsl(var(--clr-gray-900));
     }
-    button:active {
+    a:active {
         filter: brightness(.8);
     }
 </style>
