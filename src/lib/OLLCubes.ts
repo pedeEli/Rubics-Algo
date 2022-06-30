@@ -305,6 +305,20 @@ const oll: Record<OLLSections, Record<OLLType, OLLProps>> = {
             "bottomLeft": 1,
             "left": 1
         }
+    },
+    "Big Lightning Bolts": {
+        "OLL 39": {
+            "topLeft": 1,
+            "top": 1,
+            "bottomRight": 2,
+            "bottom": 1
+        },
+        "OLL 40": {
+            "top": 1,
+            "topRight": 2,
+            "bottom": 1,
+            "bottomLeft": 1
+        }
     }
 }
 

@@ -23,7 +23,8 @@ type OLLSections =
     'Square Shapes' |
     'Fish Shapes' |
     'C Shapes' |
-    'Small Lightning Bolts'
+    'Small Lightning Bolts' |
+    'Big Lightning Bolts'
 type OLLType = `OLL ${number}`
 type OLLProps = {
     topLeft?: CornerRotation,
