@@ -33,7 +33,7 @@
     const cube = cubes[section][oll]
 </script>
 
-<Back href="/oll"/>
+<Back url="/oll"/>
 <main>
     <h1>{oll}</h1>
     <div class="cube">

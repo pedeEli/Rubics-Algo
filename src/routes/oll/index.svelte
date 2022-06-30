@@ -15,7 +15,7 @@
     const names = (section: Record<OLLType, OLLProps>) => Object.keys(section) as OLLType[]
 </script>
 
-<Back href="/"/>
+<Back url="/"/>
 <main>
     <h1>OLL</h1>
     {#each titles as title}

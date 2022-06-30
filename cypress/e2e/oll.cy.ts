@@ -18,10 +18,8 @@ describe('oll categories', () => {
     })
 
     it('back button works', () => {
-        cy.get('.back-button').click()
-        cy.location().should(location => {
-            expect(location.pathname).to.eq('/')
-        })
+        cy.get('.back-button').click({timeout: 3000})
+        cy.location('pathname').should('eq', '/')
     })
 
     
@@ -43,7 +41,6 @@ describe('oll categories', () => {
         'No Edges Oriented'
     ]
 
-    Cypress.config('defaultCommandTimeout', 200)
     ollCategories.forEach(category => {
       it(`displays the '${category}' category`, () => {
         cy.get('h2').contains(category)

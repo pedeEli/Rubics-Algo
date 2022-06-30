@@ -1,5 +1,17 @@
 <script lang="ts">
-    export let href: string
+    import {afterNavigate} from '$app/navigation'
+
+    export let url: string
+
+    let href = url
+    afterNavigate(({from}) => {
+        if (!from)
+            return
+        const {pathname, search, hash} = from
+        if (url !== pathname)
+            return
+        href = `${pathname}${search}${hash}`
+    })
 </script>
 
 <a class="back-button" {href}>
