@@ -15,7 +15,6 @@ type EdgeRotation = 0 | 1
 type OLLSections =
     'All Corners Oriented' |
     'All Edges Oriented' |
-    'L Shapes' |
     'No Edges Oriented' |
     'P Shapes' |
     'W Shapes' |
@@ -24,7 +23,9 @@ type OLLSections =
     'Fish Shapes' |
     'C Shapes' |
     'Small Lightning Bolts' |
-    'Big Lightning Bolts'
+    'Big Lightning Bolts' |
+    'L Shapes' |
+    'Knight Move Shapes'
 type OLLType = `OLL ${number}`
 type OLLProps = {
     topLeft?: CornerRotation,

@@ -320,6 +320,36 @@ const oll: Record<OLLSections, Record<OLLType, OLLProps>> = {
             "bottomLeft": 2,
             "left": 1
         }
+    },
+    "Knight Move Shapes": {
+        "OLL 13": {
+            "topLeft": 2,
+            "top": 1,
+            "topRight": 2,
+            "bottomRight": 2,
+            "bottom": 1
+        },
+        "OLL 14": {
+            "topLeft": 1,
+            "top": 1,
+            "topRight": 1,
+            "bottom": 1,
+            "bottomLeft": 1
+        },
+        "OLL 15": {
+            "top": 1,
+            "topRight": 2,
+            "bottomRight": 2,
+            "bottom": 1,
+            "bottomLeft": 2
+        },
+        "OLL 16": {
+            "topLeft": 1,
+            "top": 1,
+            "bottomRight": 1,
+            "bottom": 1,
+            "bottomLeft": 1
+        }
     }
 }
 
