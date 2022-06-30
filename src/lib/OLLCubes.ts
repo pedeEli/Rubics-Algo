@@ -384,6 +384,32 @@ const oll: Record<OLLSections, Record<OLLType, OLLProps>> = {
             "bottom": 1,
             "bottomLeft": 2
         }
+    },
+    "Awkward Shapes": {
+        "OLL 29": {
+            "topLeft": 2,
+            "right": 1,
+            "bottom": 1,
+            "bottomLeft": 1
+        },
+        "OLL 30": {
+            "topRight": 1,
+            "bottomRight": 2,
+            "bottom": 1,
+            "left": 1
+        },
+        "OLL 41": {
+            "topLeft": 2,
+            "topRight": 1,
+            "right": 1,
+            "bottom": 1
+        },
+        "OLL 42": {
+            "topLeft": 1,
+            "right": 1,
+            "bottom": 1,
+            "bottomLeft": 2
+        }
     }
 }
 

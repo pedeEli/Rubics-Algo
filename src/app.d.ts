@@ -26,7 +26,8 @@ type OLLSections =
     'Big Lightning Bolts' |
     'L Shapes' |
     'Knight Move Shapes' |
-    'I Shapes'
+    'I Shapes' |
+    'Awkward Shapes'
 type OLLType = `OLL ${number}`
 type OLLProps = {
     topLeft?: CornerRotation,
