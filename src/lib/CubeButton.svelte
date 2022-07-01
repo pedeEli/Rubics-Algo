@@ -1,40 +1,15 @@
-<script context="module" lang="ts">
-    import {browser} from '$app/env'
-    const rem = browser && parseFloat(getComputedStyle(document.documentElement).fontSize)
-    const canvas = browser && document.createElement('canvas')
-    const ctx = canvas && canvas.getContext('2d')!
-</script>
-
 <script lang="ts">
-    import {onMount} from 'svelte'
     import OLLCube from '$lib/OLLCube.svelte'
 
     export let text: string
     export let href: string
-
-    let fontSizeCh = 1
-    let button: HTMLAnchorElement
-    onMount(() => {
-        if (!ctx || !rem)
-            return
-        const parent = button.parentElement!
-
-        const styles = getComputedStyle(parent)
-        const {fontWeight, fontSize, fontFamily} = styles
-        const font = `${fontWeight} ${fontSize} ${fontFamily}`
-        ctx.font = font
-
-        const textWidthPx = ctx.measureText(text).width
-        const textWidthRem = textWidthPx / rem
-        fontSizeCh = 10 / textWidthRem
-    })
 </script>
 
-<a class="cube" bind:this={button} {href}>
+<a class="cube" {href}>
     <div class="background">
         <slot><OLLCube/></slot>
     </div>
-    <div class="text" style="font-size: {fontSizeCh}ch;">
+    <div class="text">
         {text}
     </div>
 </a>
@@ -67,6 +42,7 @@
         place-items: center;
         text-shadow: .2rem .5rem .5rem hsl(0 0% 0% / .5);
         font-weight: bold;
+        font-size: 2rem;
         color: hsl(var(--clr-gray-900));
     }
     a:active {

@@ -40,7 +40,7 @@
         else
             $page.url.searchParams.set('open', [...$openStore.values()].join(','))
         
-        goto(`?${$page.url.searchParams.toString()}`)
+        goto(`?${$page.url.searchParams.toString()}`, {noscroll: true})
     }
 </script>
 
