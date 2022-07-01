@@ -24,6 +24,7 @@
 <style>
     .back-button {
         appearance: none;
+        text-decoration: none;
         width: 100%;
         border: none;
         background: none;
