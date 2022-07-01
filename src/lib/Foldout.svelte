@@ -1,11 +1,18 @@
 <script lang="ts">
-    export let title: string
+    import {createEventDispatcher} from 'svelte'
 
-    let show = false
+    export let title: string
+    export let open = false
+
+    const dispatch = createEventDispatcher()
+    const toggle = () => {
+        open = !open
+        dispatch('toggle', open)
+    }
 </script>
 
-<h2 on:click={() => show = !show}>{title}</h2>
-{#if show}
+<h2 on:click={toggle}>{title}</h2>
+{#if open}
     <slot/>
 {/if}
 

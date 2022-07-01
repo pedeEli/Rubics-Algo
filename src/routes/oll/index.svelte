@@ -1,9 +1,21 @@
 <script lang="ts" context="module">
+    import type {Load} from './__types'
+
     export const prerender = true
+    export const load: Load = async ({url}) => {
+        const query = url.searchParams.get('open')
+        return {
+            props: {
+                open: new Set<string>(query?.split(','))
+            }
+        }
+    }
 </script>
 
 <script lang="ts">
+    import {page} from '$app/stores'
     import {goto} from '$app/navigation'
+    import {writable} from 'svelte/store'
 
     import Back from '$lib/Back.svelte'
     import Foldout from '$lib/Foldout.svelte'
@@ -11,8 +23,25 @@
     import CubeButton from '$lib/CubeButton.svelte'
     import cubes from '$lib/OLLCubes'
 
+    export let open: Set<string>
+
     const titles = Object.keys(cubes) as OLLSections[]
     const names = (section: Record<OLLType, OLLProps>) => Object.keys(section) as OLLType[]
+
+    const openStore = writable(open)
+    const toggle = (title: string) => () => {
+        if ($openStore.has(title))
+            $openStore.delete(title)
+        else
+            $openStore.add(title)
+        
+        if ($openStore.size === 0)
+            $page.url.searchParams.delete('open')
+        else
+            $page.url.searchParams.set('open', [...$openStore.values()].join(','))
+        
+        goto(`?${$page.url.searchParams.toString()}`)
+    }
 </script>
 
 <Back url="/"/>
@@ -20,7 +49,7 @@
     <h1>OLL</h1>
     {#each titles as title}
         {@const section = cubes[title]}
-        <Foldout {title}>
+        <Foldout {title} open={$openStore.has(title)} on:toggle={toggle(title)}>
             <div class="cubes">
                 {#each names(section) as name}
                     {@const oll = section[name]}
