@@ -41,11 +41,11 @@ describe('oll categories', () => {
         'No Edges Oriented'
     ]
 
-    // ollCategories.forEach(category => {
-    //   it(`displays the '${category}' category`, () => {
-    //     cy.get('h2').contains(category)
-    //   })
-    // })
+    ollCategories.forEach(category => {
+      it(`displays the '${category}' category`, () => {
+        cy.get('h2').contains(category)
+      })
+    })
 
     it('saves foldout states', () => {
         cy.wait(150)
