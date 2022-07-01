@@ -24,11 +24,9 @@
             <div class="cubes">
                 {#each names(section) as name}
                     {@const oll = section[name]}
-                    <div class="cube">
-                        <CubeButton text={name} href="/oll/{title}/{name}">
-                            <OLLCube {...oll}/>
-                        </CubeButton>
-                    </div>
+                    <CubeButton text={name} href="/oll/{title}/{name}">
+                        <OLLCube {...oll}/>
+                    </CubeButton>
                 {/each}
             </div>
         </Foldout>
@@ -38,13 +36,11 @@
 <style>
     .cubes {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+        grid-template-columns: repeat(auto-fit, 10rem);
+        grid-auto-rows: 10rem;
         gap: 1rem;
         font-size: .8rem;
         width: min(60rem, 90%);
-    }
-    .cube {
-        width: 100%;
-        aspect-ratio: 1 / 1;
+        justify-content: center;
     }
 </style>
