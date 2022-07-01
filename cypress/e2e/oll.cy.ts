@@ -41,9 +41,17 @@ describe('oll categories', () => {
         'No Edges Oriented'
     ]
 
-    ollCategories.forEach(category => {
-      it(`displays the '${category}' category`, () => {
-        cy.get('h2').contains(category)
-      })
+    // ollCategories.forEach(category => {
+    //   it(`displays the '${category}' category`, () => {
+    //     cy.get('h2').contains(category)
+    //   })
+    // })
+
+    it('saves foldout states', () => {
+        cy.wait(150)
+        cy.contains('All Corners Oriented').click()
+        cy.contains('OLL 20').click()
+        cy.contains('Back').click()
+        cy.contains('OLL 20')
     })
 })

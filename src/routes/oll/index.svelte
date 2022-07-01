@@ -1,7 +1,6 @@
 <script lang="ts" context="module">
     import type {Load} from './__types'
 
-    export const prerender = true
     export const load: Load = async ({url}) => {
         const query = url.searchParams.get('open')
         return {
