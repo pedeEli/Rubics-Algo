@@ -1,8 +1,8 @@
 <script lang="ts" context="module">
-    import type {Load} from './__types/[oll]'
+    import type {Load} from './__types/[pll]'
 
     export const load: Load = async ({params, fetch}) => {
-        const data = await fetch(`/algos/oll/${params.oll}`)
+        const data = await fetch(`/algos/pll/${params.pll}`)
         if (!data.ok) {
             return {
                 props: {
@@ -23,21 +23,21 @@
 
 <script lang="ts">
     import Back from '$lib/Back.svelte'
-    import cubes from '$lib/OLLCubes'
-    import OLLCube from '$lib/OLLCube.svelte'
+    import cubes from '$lib/PLLCubes'
+    import PLLCube from '$lib/PLLCube.svelte'
 
-    export let section: OLLSections
-    export let oll: OLLType
+    export let section: PLLSections
+    export let pll: string
     export let algos: string[]
 
-    const cube = cubes[section][oll]
+    const cube = cubes[section][pll]
 </script>
 
-<Back url="/oll"/>
+<Back url="/pll"/>
 <main>
-    <h1>{oll}</h1>
+    <h1>{pll} Permutation</h1>
     <div class="cube">
-        <OLLCube {...cube}/>
+        <PLLCube {...cube}/>
     </div>
     {#each algos as algo}
         <div class="algos">{algo}</div>

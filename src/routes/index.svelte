@@ -3,10 +3,9 @@
 </script>
 
 <script lang="ts">
-    import {goto} from '$app/navigation'
-
     import CubeButton from '$lib/CubeButton.svelte'
     import OLLCube from '$lib/OLLCube.svelte'
+    import PLLCube from '$lib/PLLCube.svelte'
 </script>
 
 <main>
@@ -19,7 +18,19 @@
         />
     </CubeButton>
     <CubeButton text="PLL" href="/pll">
-        <OLLCube/>
+        <PLLCube
+            arrows={[
+                {x1: 1, y1: 1, x2: 3, y2: 1},
+                {x1: 3, y1: 1, x2: 3, y2: 3},
+                {x1: 3, y1: 3, x2: 1, y2: 1}
+            ]}
+            top0={1}
+            top2={1}
+            right0={2}
+            right2={3}
+            bottom0={0}
+            left2={0}
+        />
     </CubeButton>
 </main>
 
