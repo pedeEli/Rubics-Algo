@@ -52,6 +52,7 @@
             "cube algos";
         justify-content: center;
         gap: 1rem;
+        margin-inline: 1rem;
     }
     h1 {
         grid-area: header;
