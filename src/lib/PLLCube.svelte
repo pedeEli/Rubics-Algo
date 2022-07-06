@@ -59,6 +59,7 @@
         grid-template-rows: 100%;
     }
     .pieces, .arrows {
+        aspect-ratio: 1 / 1;
         grid-column: 1;
         grid-row: 1;
         display: grid;

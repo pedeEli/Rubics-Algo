@@ -27,6 +27,8 @@
 
 <style>
     svg {
+        width: 100%;
+        height: 100%;
         fill: none;
         stroke: hsl(var(--clr-gray-600));
         grid-column: 2 / 5;
