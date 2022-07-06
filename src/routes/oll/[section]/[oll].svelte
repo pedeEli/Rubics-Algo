@@ -1,26 +1,3 @@
-<script lang="ts" context="module">
-    import type {Load} from './__types/[oll]'
-
-    export const load: Load = async ({params, fetch}) => {
-        const data = await fetch(`/algos/oll/${params.oll}`)
-        if (!data.ok) {
-            return {
-                props: {
-                    ...params,
-                    algos: []
-                }
-            }
-        }
-        const algos = await data.text()
-        return {
-            props: {
-                ...params,
-                algos: algos.split('\n')
-            }
-        }
-    }
-</script>
-
 <script lang="ts">
     import Back from '$lib/Back.svelte'
     import cubes from '$lib/OLLCubes'
