@@ -1,4 +1,4 @@
-import type {RequestHandler} from '@sveltejs/kit'
+import type {Load} from '@sveltejs/kit'
 
 type Params<T extends 'oll' | 'pll'> = {
     [K in T]: string
@@ -6,11 +6,11 @@ type Params<T extends 'oll' | 'pll'> = {
     section: string
 }
 
-export const getAlgos = <T extends 'oll' | 'pll' = 'oll' | 'pll'>(type: T): RequestHandler<Params<T>> => async ({url, params}) => {
-    const data = await fetch(`${url.origin}/algos/${type}/${params[type]}`)
+export const getAlgos = <T extends 'oll' | 'pll' = 'oll' | 'pll'>(type: T): Load<Params<T>> => async ({params, fetch}) => {
+    const data = await fetch(`/algos/${type}/${params[type]}`)
     if (!data.ok) {
         return {
-            body: {
+            props: {
                 ...params,
                 algos: []
             }
@@ -18,7 +18,7 @@ export const getAlgos = <T extends 'oll' | 'pll' = 'oll' | 'pll'>(type: T): Requ
     }
     const algos = await data.text()
     return {
-        body: {
+        props: {
             ...params,
             algos: algos.split('\n')
         }

@@ -35,6 +35,11 @@ worker.addEventListener('fetch', event => {
     event.respondWith(
         fetch(event.request)
         .then(async response => {
+            if (!response.ok) {
+                const cache = await caches.open(cacheName)
+                const cached = await cache.match(event.request)
+                return cached!
+            }
             const cache = await caches.open(cacheName)
             cache.put(event.request, response.clone())
             return response

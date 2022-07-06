@@ -1,3 +1,10 @@
+<script lang="ts" context="module">
+    import {getAlgos} from '$lib/algos'
+    import type {Load} from './__types/[pll]'
+
+    export const load: Load = getAlgos('pll')
+</script>
+
 <script lang="ts">
     import cubes from '$lib/PLLCubes'
     import PLLCube from '$lib/PLLCube.svelte'
