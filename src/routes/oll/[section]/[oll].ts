@@ -1,22 +1,4 @@
 import type {RequestHandler} from './__types/[oll]'
+import {getAlgos} from '$lib/algos'
 
-
-
-export const get: RequestHandler = async ({params, url}) => {
-    const data = await fetch(`${url.origin}/algos/oll/${params.oll}`)
-    if (!data.ok) {
-        return {
-            body: {
-                ...params,
-                algos: []
-            }
-        }
-    }
-    const algos = await data.text()
-    return {
-        body: {
-            ...params,
-            algos: algos.split('\n')
-        }
-    }
-}
+export const get: RequestHandler = getAlgos('oll')
