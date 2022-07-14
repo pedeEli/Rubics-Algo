@@ -11,7 +11,7 @@ const externalFiles = [
 const cacheName = `rubics-${version}`
 
 const worker = (self as unknown) as ServiceWorkerGlobalScope
-const toCache = build.concat(files, prerendered, externalFiles)
+const toCache = build.concat(externalFiles, files, prerendered)
 
 worker.addEventListener('install', event => {
     event.waitUntil(caches
@@ -48,8 +48,8 @@ worker.addEventListener('fetch', event => {
                 const cached = await cache.match(event.request)
                 return cached!
             }
-            // const cache = await caches.open(cacheName)
-            // cache.put(event.request, response.clone())
+            const cache = await caches.open(cacheName)
+            cache.put(event.request, response.clone())
             return response
         })
         .catch(async () => {
