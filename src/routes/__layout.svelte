@@ -1,8 +1,27 @@
 <script lang="ts">
-    import '../styles.css'
+    import {setContext} from 'svelte'
+    import {readable} from 'svelte/store'
+    
+    import {onAuthStateChanged} from 'firebase/auth'
+    import {doc, getDoc} from 'firebase/firestore'
+    import type {DocumentSnapshot, DocumentData} from 'firebase/firestore'
+
+    import Snackbar, {Label, Actions} from '@smui/snackbar'
+    import Button from '@smui/button'
+    import IconButton from '@smui/icon-button'
+    import type {SnackbarComponentDev} from '@smui/snackbar' 
+    
+    import {auth, db} from '$lib/firebase'
+    import Login from '$lib/Login.svelte'
 
     let e: BeforeInstallPromptEvent | undefined
     let isInstalled = false
+    let snackbar: SnackbarComponentDev
+
+    $: if(!isInstalled && e !== undefined) {
+        snackbar.open()
+    }
+
     const handler = (event: BeforeInstallPromptEvent) => {
         e = event
     }
@@ -18,61 +37,26 @@
     const cancel = () => {
         e = undefined
     }
+
+    const algos = readable<DocumentSnapshot<DocumentData> | undefined>(undefined, set => {
+        return onAuthStateChanged(auth, async user => {
+            if (!user)
+                return set(undefined)
+            const docRef = doc(db, `algos/${user.uid}`)
+            set(await getDoc(docRef))
+        })
+    })
+    setContext<AlgosContext>('algos', algos)
 </script>
 
 <svelte:window on:beforeinstallprompt|preventDefault={handler} on:appinstalled={appInstalled}/>
-{#if !isInstalled && e !== undefined}
-    <div class="dialog-wrapper">
-        <div class="dialog">
-            <div class="header">Als App Installieren</div>
-            <button class="cancel" on:click={cancel}>Cancel</button>
-            <button class="install" on:click={install}>Install</button>
-        </div>
-    </div>
-{/if}
+<Snackbar bind:this={snackbar}>
+    <Label>Install app</Label>
+    <Actions>
+        <Button on:click={install}>Install</Button>
+        <IconButton class="material-icons" title="Dismiss" on:click={cancel}>close</IconButton>
+    </Actions>
+</Snackbar>
 
 <slot/>
-
-<style>
-    .dialog-wrapper {
-        position: fixed;
-        inset: 0 0 0 0;
-        display: grid;
-        place-items: center;
-        background-color: hsl(0 0% 0% / .5);
-    }
-    
-    .dialog {
-        background-color: hsl(var(--clr-gray-400));
-        box-shadow: .2rem .5rem .5rem hsl(0 0% 0% / .5);
-        display: grid;
-        grid-template-areas:
-            "header header"
-            "cancel install";
-        place-items: center;
-        padding: 1rem;
-        gap: 1rem;
-        border-radius: 1rem;
-    }
-    .header {
-        grid-area: header;
-    }
-    .cancel {
-        grid-area: cancel;
-    }
-    .install {
-        grid-area: install;
-    }
-    button {
-        appearance: none;
-        border: none;
-        border-radius: .4em;
-        font-size: 1rem;
-        padding: .5em 1em;
-        color: inherit;
-        background-color: hsl(var(--clr-gray-500))
-    }
-    button:active {
-        filter: brightness(.8);
-    }
-</style>
+<Login/>

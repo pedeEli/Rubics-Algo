@@ -70,6 +70,8 @@ type PLLSections =
     'Diagonal Corner Swap' |
     'G Permutations'
 
+type AlgosContext = import('svelte/store').Readable<import('firebase/firestore').DocumentSnapshot<import('firebase/firestore').DocumentData> | undefined>
+
 namespace svelte.JSX {
     interface SvelteWindowProps {
         onbeforeinstallprompt?: EventHandler<BeforeInstallPromptEvent, Window> | undefined | null

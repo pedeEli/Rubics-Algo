@@ -17,6 +17,6 @@
     const cube = cubes[section][pll]
 </script>
 
-<Details back="/pll" title="{pll} Permutation" {algos}>
+<Details back="/pll" title="{pll} Permutation" defaultAlgos={algos}>
     <PLLCube {...cube}/>
 </Details>

@@ -17,6 +17,6 @@
     const cube = cubes[section][oll]
 </script>
 
-<Details back="/oll" title={oll} {algos}>
+<Details back="/oll" title={oll} defaultAlgos={algos}>
     <OLLCube {...cube}/>
 </Details>
