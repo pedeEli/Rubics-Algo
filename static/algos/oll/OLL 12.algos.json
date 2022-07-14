@@ -1,0 +1,61 @@
+[
+    {
+        "turns": [
+            {
+                "side": "M",
+                "prime": true,
+                "double": false
+            },
+            {
+                "side": "R",
+                "prime": true,
+                "double": false
+            },
+            {
+                "side": "U",
+                "prime": true,
+                "double": false
+            },
+            {
+                "side": "R",
+                "prime": false,
+                "double": false
+            },
+            {
+                "side": "U",
+                "prime": true,
+                "double": false
+            },
+            {
+                "side": "R",
+                "prime": true,
+                "double": false
+            },
+            {
+                "side": "U",
+                "prime": false,
+                "double": true
+            },
+            {
+                "side": "R",
+                "prime": false,
+                "double": false
+            },
+            {
+                "side": "U",
+                "prime": true,
+                "double": false
+            },
+            {
+                "side": "R",
+                "prime": false,
+                "double": false
+            },
+            {
+                "side": "r",
+                "prime": true,
+                "double": false
+            }
+        ]
+    }
+]

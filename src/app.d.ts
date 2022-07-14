@@ -70,6 +70,8 @@ type PLLSections =
     'Diagonal Corner Swap' |
     'G Permutations'
 
+type AlgosContext = import('svelte/store').Readable<import('firebase/firestore').DocumentSnapshot<import('firebase/firestore').DocumentData> | undefined>
+
 namespace svelte.JSX {
     interface SvelteWindowProps {
         onbeforeinstallprompt?: EventHandler<BeforeInstallPromptEvent, Window> | undefined | null
@@ -85,4 +87,49 @@ interface BeforeInstallPromptEvent extends Event {
         platform: string
     }>
     prompt(): Promise<void>
+}
+
+
+
+
+interface RubicsAlgorithm {
+    description?: string,
+    turns: Array<Turn | TurnGroup>
+}
+
+interface TurnGroup {
+    info?: string,
+    turns: Array<Turn>
+}
+
+type FullHandSide = 'R' | 'r' | 'L' | 'l'
+type SingleFingerSide = 'U' | 'u' | 'D' | 'd' | 'F' | 'f' | 'B' | 'b' | 'x' | 'y' | 'z' | 'M' | 'E' | 'S'
+
+type Turn = {
+    side: FullHandSide,
+    prime: boolean,
+    double: boolean
+} | {
+    side: SingleFingerSide,
+    prime: boolean,
+    double: false,
+    info?: SingleTurnInfo
+} | {
+    side: SingleFingerSide,
+    prime: boolean,
+    double: true,
+    info?: DoubleTurnInfo
+}
+
+type Finger = 'Thumb' | 'Index Finger' | 'Middle Finger' | 'Ring Finger' | 'Pinky Finger'
+type Hand = 'Left Hand' | 'Right Hand'
+
+interface SingleTurnInfo {
+    finger: Finger,
+    hand: Hand
+}
+
+interface DoubleTurnInfo {
+    first: SingleTurnInfo,
+    second: SingleTurnInfo
 }

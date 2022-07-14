@@ -38,6 +38,7 @@
         position: fixed;
         top: 0;
         background-color: inherit;
+        z-index: 100;
     }
     .back-button:active {
         text-decoration: none;

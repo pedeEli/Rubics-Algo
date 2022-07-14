@@ -1,0 +1,9 @@
+{
+    "json.schemas": [
+
+        {
+            "fileMatch": ["*.algos.json"],
+            "url": "/static/algos/algos.schema.json"
+        }
+    ]
+}

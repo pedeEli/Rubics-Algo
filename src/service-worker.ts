@@ -2,11 +2,15 @@
 
 import {build, files, prerendered, version} from '$service-worker'
 
+const externalFiles = [
+    'https://fonts.googleapis.com/css?family=Roboto:300,400,500,600,700',
+    'https://fonts.googleapis.com/css?family=Roboto+Mono'
+]
 
 const cacheName = `rubics-${version}`
 
 const worker = (self as unknown) as ServiceWorkerGlobalScope
-const toCache = build.concat(files, prerendered)
+const toCache = build.concat(externalFiles, files, prerendered)
 
 worker.addEventListener('install', event => {
     event.waitUntil(caches
@@ -32,6 +36,9 @@ worker.addEventListener('activate', event => {
 
 
 worker.addEventListener('fetch', event => {
+    if (event.request.method !== 'GET')
+        return event.respondWith(fetch(event.request))
+
     event.respondWith(
         fetch(event.request)
         .then(async response => {

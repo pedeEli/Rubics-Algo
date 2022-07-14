@@ -7,7 +7,7 @@ type Params<T extends 'oll' | 'pll'> = {
 }
 
 export const getAlgos = <T extends 'oll' | 'pll' = 'oll' | 'pll'>(type: T): Load<Params<T>> => async ({params, fetch}) => {
-    const data = await fetch(`/algos/${type}/${params[type]}`)
+    const data = await fetch(`/algos/${type}/${params[type]}.algos.json`)
     if (!data.ok) {
         return {
             props: {
@@ -16,11 +16,22 @@ export const getAlgos = <T extends 'oll' | 'pll' = 'oll' | 'pll'>(type: T): Load
             }
         }
     }
-    const algos = await data.text()
+    const algos = await data.json()
     return {
         props: {
             ...params,
-            algos: algos.split('\n')
+            algos: algos
         }
     }
+}
+
+
+
+export const turnToString = (turn: Turn) => {
+    let str = turn.side
+    if (turn.double)
+        str += '2'
+    if (turn.prime)
+        str += '\''
+    return str
 }

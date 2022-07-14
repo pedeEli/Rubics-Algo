@@ -1,10 +1,10 @@
 <script lang="ts">
     import {goto} from '$app/navigation'
     import {page} from '$app/stores'
-    import {writable} from 'svelte/store'
+
+    import Accordion, {Panel, Header, Content} from '@smui-extra/accordion'
 
     import Back from '$lib/Back.svelte'
-    import Foldout from '$lib/Foldout.svelte'
     import CubeButton from '$lib/CubeButton.svelte'
 
     export let heading: 'oll' | 'pll'
@@ -13,38 +13,50 @@
 
     const titles = Object.keys(cubes)
 
-    const openStore = writable(open)
-    const toggle = (title: string) => () => {
-        if ($openStore.has(title))
-            $openStore.delete(title)
-        else
-            $openStore.add(title)
-        
-        if ($openStore.size === 0)
-            $page.url.searchParams.delete('open')
-        else
-            $page.url.searchParams.set('open', [...$openStore.values()].join(','))
-        
+    const openHandler = (title: string) => () => {
+        open.add(title)
+        updateQuery()
         goto(`?${$page.url.searchParams.toString()}`, {noscroll: true})
+    }
+
+    const closeHandler = (title: string) => () => {
+        open.delete(title)
+        updateQuery()
+        goto(`?${$page.url.searchParams.toString()}`, {noscroll: true})
+    }
+
+    const updateQuery = () => {
+        if (open.size === 0)
+            return $page.url.searchParams.delete('open')
+        $page.url.searchParams.set('open', [...open.values()].join(','))
     }
 </script>
 
 <Back url="/"/>
 <main>
     <h1>{heading.toUpperCase()}</h1>
-    {#each titles as title}
+    <Accordion style="width: min(60rem, 90%);" multiple>
+        {#each titles as title}
         {@const section = cubes[title]}
-        <Foldout {title} open={$openStore.has(title)} on:toggle={toggle(title)}>
-            <div class="cubes">
-                {#each Object.keys(section) as name}
-                    {@const props = section[name]}
-                    <CubeButton text={name} href="/{heading}/{title}/{name}">
-                        <slot {props}/>
-                    </CubeButton>
-                {/each}
-            </div>
-        </Foldout>
-    {/each}
+        <Panel
+            open={open.has(title)}
+            on:SMUIAccordionPanel:opened={openHandler(title)}
+            on:SMUIAccordionPanel:closed={closeHandler(title)}
+        >
+            <Header>{title}</Header>
+            <Content style="display: flex; justify-content: center;">
+                <div class="cubes">
+                    {#each Object.keys(section) as name}
+                        {@const props = section[name]}
+                        <CubeButton text={name} href="/{heading}/{title}/{name}">
+                            <slot {props}/>
+                        </CubeButton>
+                    {/each}
+                </div>
+            </Content>
+        </Panel>
+        {/each}
+    </Accordion>
 </main>
 
 <style>

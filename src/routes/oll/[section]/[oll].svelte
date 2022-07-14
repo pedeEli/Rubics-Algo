@@ -12,11 +12,11 @@
 
     export let section: OLLSections
     export let oll: OLLType
-    export let algos: string[]
+    export let algos: RubicsAlgorithm[]
 
     const cube = cubes[section][oll]
 </script>
 
-<Details back="/oll" title={oll} {algos}>
+<Details back="/oll" title={oll} defaultAlgos={algos}>
     <OLLCube {...cube}/>
 </Details>

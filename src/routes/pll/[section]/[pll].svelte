@@ -12,11 +12,11 @@
 
     export let section: PLLSections
     export let pll: string
-    export let algos: string[]
+    export let algos: RubicsAlgorithm[]
 
     const cube = cubes[section][pll]
 </script>
 
-<Details back="/pll" title="{pll} Permutation" {algos}>
+<Details back="/pll" title="{pll} Permutation" defaultAlgos={algos}>
     <PLLCube {...cube}/>
 </Details>
