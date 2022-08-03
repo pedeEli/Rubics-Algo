@@ -113,17 +113,28 @@
         z-index: 10;
     }
     .grid {
+        width: min(25rem, 100%);
         display: grid;
-        grid-template-columns: repeat(6, 3em);
-        grid-auto-rows: 3em;
+        grid-template-columns: repeat(6, 1fr);
         gap: .3rem;
+        background-color: var(--clr-surface);
+        padding: 4px;
+        padding-bottom: 0;
+        border-radius: 4px;
+    }
+    @media (max-width: 315px) {
+        .grid {
+            gap: .1rem;
+        }
     }
     .key {
+        aspect-ratio: 1 / 1;
         height: auto;
         min-width: auto;
         padding: 0;
     }
     .long {
+        aspect-ratio: 3 / 1;
         grid-column: span 3;
     }
     .active {
