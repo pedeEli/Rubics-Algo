@@ -68,18 +68,18 @@
         grid-template-rows: .2fr 1fr 1fr 1fr .2fr;
     }
     .piece {
-        background: hsl(var(--clr-yellow));
+        background: var(--clr-yellow);
     }
     .color-0 {
-        background-color: orange;
+        background-color: var(--clr-orange);
     }
     .color-1 {
-        background-color: green;
+        background-color: var(--clr-green);
     }
     .color-2 {
-        background-color: red;
+        background-color: var(--clr-red);
     }
     .color-3 {
-        background-color: blue;
+        background-color: var(--clr-blue);
     }
 </style>

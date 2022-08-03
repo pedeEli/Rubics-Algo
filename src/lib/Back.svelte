@@ -1,5 +1,8 @@
 <script lang="ts">
     import {afterNavigate} from '$app/navigation'
+    import {Icon} from '@smui/common'
+    import {Svg} from '@smui/common/elements'
+    import {mdiChevronLeft} from '@mdi/js'
 
     export let url: string
 
@@ -15,14 +18,15 @@
 </script>
 
 <a class="back-button" {href}>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512">
-        <path d="M192 448c-8.188 0-16.38-3.125-22.62-9.375l-160-160c-12.5-12.5-12.5-32.75 0-45.25l160-160c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25L77.25 256l137.4 137.4c12.5 12.5 12.5 32.75 0 45.25C208.4 444.9 200.2 448 192 448z"/>
-    </svg>
+    <Icon component={Svg} viewBox="0 0 24 24" height="2rem">
+        <path fill="currentColor" d={mdiChevronLeft}/>
+    </Icon>
     <div class="text">Back</div>
 </a>
 
 <style>
     .back-button {
+        color: var(--clr-text);
         appearance: none;
         text-decoration: none;
         width: 100%;
@@ -31,23 +35,19 @@
         text-align: left;
         padding: .5rem 1rem;
         fill: white;
-        box-shadow: 0rem .3rem 1rem hsl(0 0% 0% / .5);
+        box-shadow: 0rem .3rem 1rem hsl(0 0% 0% / .2);
         display: flex;
         align-items: center;
         gap: 1rem;
         position: fixed;
         top: 0;
         background-color: inherit;
-        z-index: 100;
+        z-index: 1;
     }
     .back-button:active {
         text-decoration: none;
     }
-    svg {
-        height: 2rem;
-    }
     .text {
-        color: white;
         font-size: 2rem;
         transform: translateY(-3%);
     }

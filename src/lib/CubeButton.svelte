@@ -31,6 +31,6 @@
         text-shadow: .2rem .5rem .5rem hsl(0 0% 0% / .5);
         font-weight: bold;
         font-size: 2rem;
-        color: hsl(var(--clr-gray-900));
+        color: var(--clr-text);
     }
 </style>

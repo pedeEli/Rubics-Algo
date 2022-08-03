@@ -50,49 +50,52 @@
     const insertRightHandler = () => dispatch('insertright')
     const delHandler = () => dispatch('delete')
     const groupHandler = () => dispatch('group')
+
+    const toggleKey = "key mdc-button mdc-button--raised"
+    const actionKey = `${toggleKey} smui-button--color-secondary`
 </script>
 
 <div class="keyboard" transition:fly>
     <div class="grid">
-        <button use:Ripple={{surface: true}} class="key long" class:active={prime} on:click={togglePrime}>Prime</button>
-        <button use:Ripple={{surface: true}} class="key long" class:active={double} on:click={toggleDouble}>Double</button>
+        <button use:Ripple={{surface: true}} class="{toggleKey} long" class:smui-button--color-secondary={!prime} on:click={togglePrime}>Prime</button>
+        <button use:Ripple={{surface: true}} class="{toggleKey} long" class:smui-button--color-secondary={!double} on:click={toggleDouble}>Double</button>
 
         {#each letters as letter}
-            <button use:Ripple={{surface: true}} class="key" class:active={side === letter} on:click={setSide(letter)}>{letter}</button>
+            <button use:Ripple={{surface: true}} class="{toggleKey}" class:smui-button--color-secondary={side !== letter} on:click={setSide(letter)}>{letter}</button>
         {/each}
 
-        <button use:Ripple={{surface: true}} disabled={disablePrevious} class="key" on:click={previousHandler}>
+        <button use:Ripple={{surface: true}} disabled={disablePrevious} class="{actionKey}" on:click={previousHandler}>
             <Icon component={Svg} viewBox="0 0 24 24">
                 <path fill="currentColor" d={mdiChevronLeft}/>
             </Icon>
         </button>
-        <button use:Ripple={{surface: true}} class="key" on:click={nextHandler}>
+        <button use:Ripple={{surface: true}} class="{actionKey}" on:click={nextHandler}>
             <Icon component={Svg} viewBox="0 0 24 24">
                 <path fill="currentColor" d={mdiChevronRight}/>
             </Icon>
         </button>
-        <button use:Ripple={{surface: true}} disabled={disableDelete} class="key" on:click={delHandler}>
+        <button use:Ripple={{surface: true}} disabled={disableDelete} class="{actionKey}" on:click={delHandler}>
             <Icon component={Svg} viewBox="0 0 24 24">
                 <path fill="currentColor" d={mdiDelete}/>
             </Icon>
         </button>
-        <button use:Ripple={{surface: true}} disabled={disableGroup} class="key" on:click={groupHandler}>
+        <button use:Ripple={{surface: true}} disabled={disableGroup} class="{actionKey}" on:click={groupHandler}>
             <Icon component={Svg} viewBox="0 0 24 24">
                 <path fill="currentColor" d={mdiCodeBrackets}/>
             </Icon>
         </button>
-        <div class="insert">
-            <button use:Ripple={{surface: true}} disabled={disableInsertLeft} class="key insert-left" on:click={insertLeftHandler}>
+        <div class="insert smui-button__group">
+            <button use:Ripple={{surface: true}} disabled={disableInsertLeft} class="{actionKey} insert-left" on:click={insertLeftHandler}>
                 <Icon component={Svg} viewBox="0 0 24 24">
                     <path fill="currentColor" d={mdiChevronLeft}/>
                 </Icon>
             </button>
-            <button use:Ripple={{surface: true}} disabled={disableInsertRight} class="key insert-right" on:click={insertRightHandler}>
+            <div class="insert-text">Insert</div>
+            <button use:Ripple={{surface: true}} disabled={disableInsertRight} class="{actionKey} insert-right" on:click={insertRightHandler}>
                 <Icon component={Svg} viewBox="0 0 24 24">
                     <path fill="currentColor" d={mdiChevronRight}/>
                 </Icon>
             </button>
-            <div class="insert-text">Insert</div>
         </div>
     </div>
 </div>
@@ -116,12 +119,9 @@
         gap: .3rem;
     }
     .key {
-        font-size: inherit;
-        background-color: gray;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: none;
+        height: auto;
+        min-width: auto;
+        padding: 0;
     }
     .long {
         grid-column: span 3;
@@ -133,7 +133,6 @@
         display: grid;
         grid-template-columns: 50% 50%;
         grid-template-rows: auto;
-        background-color: gray;
         grid-column: span 2;
     }
     .insert-left {

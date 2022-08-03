@@ -30,7 +30,7 @@
         width: 100%;
         height: 100%;
         fill: none;
-        stroke: hsl(var(--clr-gray-600));
+        stroke: var(--clr-arrow);
         grid-column: 2 / 5;
         grid-row: 2 / 5;
     }

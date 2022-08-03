@@ -4,11 +4,11 @@
 
 // Svelte Colors!
 @use '@material/theme/index' as theme with (
-  $primary: color-palette.$blue-600,
-  $secondary: hsl(0 0% 33%),
-  $surface: #fff,
+  $primary: color-palette.$teal-500,
+  $secondary: color-palette.$blue-grey-200,
+  $surface: color-palette.$blue-grey-100,
   $background: color-palette.$blue-grey-50,
   $error: color-palette.$red-600
 );
 
-@import './styles.scss';
+@import '../styles.scss';

@@ -1,5 +1,6 @@
 <script lang="ts">
     import IconButton, {Icon} from '@smui/icon-button'
+    import Fab, {Icon as FabIcon} from '@smui/fab'
     import {Svg} from '@smui/common/elements'
     import {mdiPlus, mdiDelete} from '@mdi/js'
 
@@ -97,11 +98,11 @@
         </span>
         {#if $userAlgos}
             <span class="add-button">
-                <IconButton on:click={openAddDialog}>
-                    <Icon component={Svg} viewBox="0 0 24 24">
+                <Fab mini color="primary" on:click={openAddDialog}>
+                    <FabIcon component={Svg} viewBox="0 0 24 24">
                         <path fill="currentColor" d={mdiPlus}/>
-                    </Icon>
-                </IconButton>
+                    </FabIcon>
+                </Fab>
             </span>
         {/if}
     </h1>
@@ -203,7 +204,7 @@
         appearance: none;
         border-radius: 1rem;
         padding: min(5vw, 1rem);
-        background: hsl(var(--clr-gray-500));
+        background: var(--clr-secondary);
         grid-area: cube;
     }
     .algos {
