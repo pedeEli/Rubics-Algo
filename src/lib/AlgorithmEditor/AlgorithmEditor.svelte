@@ -3,9 +3,14 @@
     import Button from '@smui/button'
 
     import {turnToString} from '$lib/algos'
-    import Keyboard from '$lib/Keyboard.svelte'
+    import Keyboard from './Keyboard.svelte'
+
+    import Tabs, {Tab} from '$lib/tabs'
+
     import {writable} from 'svelte/store'
     import {createEventDispatcher} from 'svelte'
+
+    import {fly} from 'svelte/transition'
 
     export let algo: RubicsAlgorithm
     export let show: boolean
@@ -432,90 +437,100 @@
 
     const dispatch = createEventDispatcher()
     const save = () => dispatch('save', algo)
+
+    let activeTab = 'turns'
 </script>
 
 
 <div class="editor" bind:this={editor} class:initialShow>
     <h2>New Algorithm</h2>
-    <span class="algo">
-        {#each algo.turns as turn, index}
-            {#if equalsInsert(selected, index)}
-                <button
-                    use:Ripple={{surface: true}}
-                    class="mdc-button mdc-button--raised"
-                    on:click={selectNew(-1)}
-                >
-                    <span class="caret">|</span>
-                </button>
-            {/if}
-            {#if 'turns' in turn}
-                <span class="turn-group">
-                    <button
-                        use:Ripple={{surface: true}}
-                        class="mdc-button"
-                        class:mdc-button--raised={equalsGroup(selected, turn) && selected.side === 'left'}
-                        on:click={selectGroup(turn, index, 'left')}
-                    >(</button>
-                    {#each turn.turns as t, i}
-                        {#if equalsInsert(selected, i, index)}
+    
+    <Tabs tabs={['turns', 'info']}>
+        <Tab tab="turns">
+            <span class="algo" transition:fly={{x: -100}}>
+                {#each algo.turns as turn, index}
+                    {#if equalsInsert(selected, index)}
+                        <button
+                            use:Ripple={{surface: true}}
+                            class="mdc-button mdc-button--raised"
+                            on:click={selectNew(-1)}
+                        >
+                            <span class="caret">|</span>
+                        </button>
+                    {/if}
+                    {#if 'turns' in turn}
+                        <span class="turn-group">
                             <button
                                 use:Ripple={{surface: true}}
-                                class="mdc-button mdc-button--raised"
-                                on:click={selectNew(-1)}
+                                class="mdc-button"
+                                class:mdc-button--raised={equalsGroup(selected, turn) && selected.side === 'left'}
+                                on:click={selectGroup(turn, index, 'left')}
+                            >(</button>
+                            {#each turn.turns as t, i}
+                                {#if equalsInsert(selected, i, index)}
+                                    <button
+                                        use:Ripple={{surface: true}}
+                                        class="mdc-button mdc-button--raised"
+                                        on:click={selectNew(-1)}
+                                    >
+                                        <span class="caret">|</span>
+                                    </button>
+                                {/if}
+                                <button
+                                    use:Ripple={{surface: true}}
+                                    class="mdc-button"
+                                    class:mdc-button--raised={equalsTurn(selected, t, [turn, index])}
+                                    on:click={selectTurn(t, i, [turn, index])}
+                                >
+                                    {turnToString(equalsTurn(selected, t, [turn, index]) ? selected.turn : t)}
+                                </button>
+                            {/each}
+                            <button
+                                use:Ripple={{surface: true}}
+                                class="mdc-button"
+                                class:mdc-button--outlined={!equalsNew(selected, index)}
+                                class:mdc-button--raised={equalsNew(selected, index)}
+                                on:click={selectNew(index)}
                             >
-                                <span class="caret">|</span>
+                                {#if equalsNew(selected, index)}
+                                    <span class="caret">|</span>
+                                {/if}
                             </button>
-                        {/if}
+                            <button
+                                use:Ripple={{surface: true}}
+                                class="mdc-button"
+                                class:mdc-button--raised={equalsGroup(selected, turn) && selected.side === 'right'}
+                                on:click={selectGroup(turn, index, 'right')}
+                            >)</button>
+                        </span>
+                    {:else}
                         <button
                             use:Ripple={{surface: true}}
                             class="mdc-button"
-                            class:mdc-button--raised={equalsTurn(selected, t, [turn, index])}
-                            on:click={selectTurn(t, i, [turn, index])}
+                            class:mdc-button--raised={equalsTurn(selected, turn)}
+                            on:click={selectTurn(turn, index)}
                         >
-                            {turnToString(equalsTurn(selected, t, [turn, index]) ? selected.turn : t)}
+                            {turnToString(equalsTurn(selected, turn) ? selected.turn : turn)}
                         </button>
-                    {/each}
-                    <button
-                        use:Ripple={{surface: true}}
-                        class="mdc-button"
-                        class:mdc-button--outlined={!equalsNew(selected, index)}
-                        class:mdc-button--raised={equalsNew(selected, index)}
-                        on:click={selectNew(index)}
-                    >
-                        {#if equalsNew(selected, index)}
-                            <span class="caret">|</span>
-                        {/if}
-                    </button>
-                    <button
-                        use:Ripple={{surface: true}}
-                        class="mdc-button"
-                        class:mdc-button--raised={equalsGroup(selected, turn) && selected.side === 'right'}
-                        on:click={selectGroup(turn, index, 'right')}
-                    >)</button>
-                </span>
-            {:else}
+                    {/if}
+                {/each}
                 <button
                     use:Ripple={{surface: true}}
                     class="mdc-button"
-                    class:mdc-button--raised={equalsTurn(selected, turn)}
-                    on:click={selectTurn(turn, index)}
+                    class:mdc-button--outlined={!equalsNew(selected, -1)}
+                    class:mdc-button--raised={equalsNew(selected, -1)}
+                    on:click={selectNew(-1)}
                 >
-                    {turnToString(equalsTurn(selected, turn) ? selected.turn : turn)}
+                    {#if equalsNew(selected, -1)}
+                        <span class="caret">|</span>
+                    {/if}
                 </button>
-            {/if}
-        {/each}
-        <button
-            use:Ripple={{surface: true}}
-            class="mdc-button"
-            class:mdc-button--outlined={!equalsNew(selected, -1)}
-            class:mdc-button--raised={equalsNew(selected, -1)}
-            on:click={selectNew(-1)}
-        >
-            {#if equalsNew(selected, -1)}
-                <span class="caret">|</span>
-            {/if}
-        </button>
-    </span>
+            </span>
+        </Tab>
+        <Tab tab="info">
+            <span>Info</span>
+        </Tab>
+    </Tabs>
     <div class="buttons">
         <Button variant="raised" on:click={save}>Save</Button>
         <Button variant="raised">Reset</Button>

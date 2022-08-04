@@ -11,7 +11,7 @@
     import Back from '$lib/Back.svelte'
     import Algorithm from '$lib/Algorithm.svelte'
     import DetailedAlgorithm from '$lib/DetailedAlgorithm.svelte'
-    import AlgorithmEditor from '$lib/AlgorithmEditor.svelte'
+    import AlgorithmEditor from '$lib/AlgorithmEditor'
 
     import {getContext, onDestroy} from 'svelte'
 

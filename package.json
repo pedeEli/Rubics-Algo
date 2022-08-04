@@ -22,6 +22,8 @@
 		"@smui/dialog": "^6.0.0-beta.16",
 		"@smui/fab": "^6.0.0",
 		"@smui/snackbar": "^6.0.0-beta.16",
+		"@smui/tab": "^6.0.0",
+		"@smui/tab-bar": "^6.0.0",
 		"@smui/textfield": "^6.0.0-beta.16",
 		"@sveltejs/adapter-auto": "next",
 		"@sveltejs/adapter-cloudflare": "^1.0.0-next.23",
