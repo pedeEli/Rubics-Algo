@@ -46,3 +46,12 @@ main {
 button {
     margin: 0;
 }
+
+.mdc-text-field--textarea span {
+    width: 100%;
+}
+
+.mdc-text-field--textarea .mdc-notched-outline .mdc-notched-outline__notch {
+    width: auto !important;
+    padding-right: 0 !important;
+}

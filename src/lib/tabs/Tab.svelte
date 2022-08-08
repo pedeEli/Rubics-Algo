@@ -5,8 +5,9 @@
 
     let element: HTMLDivElement
     const getHeight = () => {
-        const {height} = element.getBoundingClientRect()
-        return height
+        // const {height} = element.getBoundingClientRect()
+        // return height
+        return element.offsetHeight
     }
     getContext<(tab: string, getHeight: () => number) => void>('height')(tab, getHeight)
 </script>
@@ -18,5 +19,6 @@
 <style>
     .tab {
         grid-row: 1 / 2;
+        padding-block: 1rem;
     }
 </style>

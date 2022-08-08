@@ -8,7 +8,7 @@
         "type": "object",
         "required": ["turns"],
         "properties": {
-            "description": { "type": "string" },
+            "info": { "type": "string" },
             "turns": {
                 "type": "array",
                 "items": {

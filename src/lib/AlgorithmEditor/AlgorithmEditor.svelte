@@ -1,6 +1,7 @@
 <script lang="ts">
     import Ripple from '@smui/ripple'
     import Button from '@smui/button'
+    import TextField from '@smui/textfield'
 
     import {turnToString} from '$lib/algos'
     import Keyboard from './Keyboard.svelte'
@@ -10,7 +11,8 @@
     import {writable} from 'svelte/store'
     import {createEventDispatcher} from 'svelte'
 
-    import {fly} from 'svelte/transition'
+    import SelectableAlgorithm, {isTurn} from './SelectableAlgorithm.svelte'
+    import type {Selected, SelectedTurn, SelectedGroup} from './SelectableAlgorithm.svelte'
 
     export let algo: RubicsAlgorithm
     export let show: boolean
@@ -19,36 +21,8 @@
     let prime = writable(false)
     let side = writable<SingleFingerSide | FullHandSide | ''>('')
 
-    interface SelectedTurn {
-        type: 'turn',
-        turn: Turn,
-        index: number,
-        group?: [TurnGroup, number]
-    }
-    interface SelectedGroup {
-        type: 'group',
-        group: TurnGroup,
-        index: number,
-        side: 'left' | 'right'
-    }
-    interface SelectedNew {
-        type: 'new',
-        index: number
-    }
-    interface SelectedInsert {
-        type: 'insert',
-        index: number,
-        group: number
-    }
-
-    type Selected = SelectedTurn | SelectedGroup | SelectedNew | SelectedInsert
-
     export let selected: Selected
 
-    const isTurn = (selected: Selected): selected is SelectedTurn => selected.type === 'turn'
-    const isGroup = (selected: Selected): selected is SelectedGroup => selected.type === 'group'
-    const isNew = (selected: Selected): selected is SelectedNew => selected.type === 'new'
-    const isInsert = (selected: Selected): selected is SelectedInsert => selected.type === 'insert'
 
     $: isTurn(selected) && (selected.turn.side = $side as SingleFingerSide | FullHandSide)
     $: isTurn(selected) && (selected.turn.prime = $prime)
@@ -133,7 +107,7 @@
         }
     }
 
-    const selectNew = (index: number) => () => {
+    const selectNew = (index: number) => {
         selected = {
             type: 'new',
             index
@@ -141,7 +115,7 @@
         resetKeyboard()
     }
 
-    const selectTurn = (turn: Turn, index: number, group?: SelectedTurn['group']) => () => {
+    const selectTurn = (turn: Turn, index: number, group?: SelectedTurn['group']) => {
         $side = turn.side
         $prime = turn.prime
         $double = turn.double
@@ -153,7 +127,7 @@
         }
     }
 
-    const selectGroup = (group: TurnGroup, index: number, side: SelectedGroup['side']) => () => {
+    const selectGroup = (group: TurnGroup, index: number, side: SelectedGroup['side']) => {
         selected = {
             type: 'group',
             group,
@@ -163,7 +137,7 @@
         resetKeyboard()
     }
 
-    const selectInsert = (index: number, group = -1) => () => {
+    const selectInsert = (index: number, group = -1) => {
         resetKeyboard()
         selected = {
             type: 'insert',
@@ -228,7 +202,6 @@
             return selectGroup(previous, index - 1, 'right')
         return selectTurn(previous, index - 1)
     }
-    const handlePrevious = () => selectPrevious()()
 
     const selectNext = () => {
         const {index, type} = selected
@@ -276,9 +249,8 @@
             return selectGroup(next, index + 1, 'left')
         return selectTurn(next, index + 1)
     }
-    const handleNext = () => selectNext()()
 
-    const getGroup = () => {
+    const addGroup = () => {
         const {type, index} = selected
         const {turns} = algo
         if (type === 'insert' && selected.group === -1) {
@@ -290,9 +262,8 @@
         algo.turns = [...turns, {turns: []}]
         return selectNew(algo.turns.length - 1)
     }
-    const handleGroup = () => getGroup()()
 
-    const getDelete = () => {
+    const deleteSelected = () => {
         const {type, index} = selected
         const {turns} = algo
         if (type === 'new' || type === 'insert')
@@ -334,9 +305,8 @@
             return selectGroup(next, index, 'left')
         return selectTurn(next, index)
     }
-    const handleDelete = () => getDelete()()
 
-    const selectInsertLeft = () => {
+    const insertLeft = () => {
         const {type, index} = selected
         if (type === 'new' || type === 'insert')
             return () => {}
@@ -349,9 +319,8 @@
             return selectInsert(index, selected.group[1])
         return selectInsert(index)
     }
-    const handleInsertLeft = () => selectInsertLeft()()
 
-    const selectInsertRight = () => {
+    const insertRight = () => {
         const {type, index} = selected
         if (type === 'new' || type === 'insert')
             return () => {}
@@ -372,25 +341,6 @@
             return () => {}
         return selectInsert(index + 1)
     }
-    const handleInsertRight = () => selectInsertRight()()
-
-    const equalsTurn = (selected: Selected, turn: Turn, group?: SelectedTurn['group']): selected is SelectedTurn => {
-        if (!isTurn(selected))
-            return false
-        if (!group)
-            return selected.turn === turn
-        if (!selected.group)
-            return false
-        return selected.turn === turn && selected.group[0] === group[0] && selected.group[1] === group[1]
-    }
-    const equalsGroup = (selected: Selected, group: TurnGroup): selected is SelectedGroup => isGroup(selected) && selected.group === group
-    const equalsNew = (selected: Selected, index: number): selected is SelectedNew => isNew(selected) && selected.index === index
-    const equalsInsert = (selected: Selected, index: number, group = -1): selected is SelectedInsert => {
-        return isInsert(selected)
-            && selected.index === index
-            && selected.group === group
-    }
-
 
 
     const disablePrevious = (selected: Selected) => {
@@ -439,96 +389,76 @@
     const save = () => dispatch('save', algo)
 
     let activeTab = 'turns'
+
+    $: showKeyboard = activeTab === 'turns' && show
 </script>
 
 
 <div class="editor" bind:this={editor} class:initialShow>
     <h2>New Algorithm</h2>
     
-    <Tabs tabs={['turns', 'info']}>
+    <Tabs tabs={['turns', 'info']} bind:active={activeTab}>
         <Tab tab="turns">
-            <span class="algo" transition:fly={{x: -100}}>
-                {#each algo.turns as turn, index}
-                    {#if equalsInsert(selected, index)}
-                        <button
-                            use:Ripple={{surface: true}}
-                            class="mdc-button mdc-button--raised"
-                            on:click={selectNew(-1)}
-                        >
-                            <span class="caret">|</span>
-                        </button>
-                    {/if}
-                    {#if 'turns' in turn}
-                        <span class="turn-group">
-                            <button
-                                use:Ripple={{surface: true}}
-                                class="mdc-button"
-                                class:mdc-button--raised={equalsGroup(selected, turn) && selected.side === 'left'}
-                                on:click={selectGroup(turn, index, 'left')}
-                            >(</button>
-                            {#each turn.turns as t, i}
-                                {#if equalsInsert(selected, i, index)}
-                                    <button
-                                        use:Ripple={{surface: true}}
-                                        class="mdc-button mdc-button--raised"
-                                        on:click={selectNew(-1)}
-                                    >
-                                        <span class="caret">|</span>
-                                    </button>
-                                {/if}
+            <SelectableAlgorithm
+                editable
+                bind:algo
+                bind:selected
+                on:selectnew={resetKeyboard}
+                on:selectgroup={resetKeyboard}
+                on:selectturn={({detail}) => {
+                    $side = detail.turn.side
+                    $prime = detail.turn.double
+                    $double = detail.turn.double
+                }}
+            />
+        </Tab>
+        <Tab tab="info">
+            <span class="info">
+                <TextField textarea label="Info" value="" input$resizable={false}/>
+                <SelectableAlgorithm
+                    bind:algo
+                    bind:selected
+                />
+                <!-- <span class="algo">  
+                    {#each algo.turns as turn, index}
+                        {#if 'turns' in turn}
+                            <span class="turn-group">
                                 <button
                                     use:Ripple={{surface: true}}
                                     class="mdc-button"
-                                    class:mdc-button--raised={equalsTurn(selected, t, [turn, index])}
-                                    on:click={selectTurn(t, i, [turn, index])}
-                                >
-                                    {turnToString(equalsTurn(selected, t, [turn, index]) ? selected.turn : t)}
-                                </button>
-                            {/each}
+                                    class:mdc-button--raised={equalsGroup(selected, turn) && selected.side === 'left'}
+                                    on:click={selectGroup(turn, index, 'left')}
+                                >(</button>
+                                {#each turn.turns as t, i}
+                                    <button
+                                        use:Ripple={{surface: true}}
+                                        class="mdc-button"
+                                        class:mdc-button--raised={equalsTurn(selected, t, [turn, index])}
+                                        on:click={selectTurn(t, i, [turn, index])}
+                                    >
+                                        {turnToString(equalsTurn(selected, t, [turn, index]) ? selected.turn : t)}
+                                    </button>
+                                {/each}
+                                <button
+                                    use:Ripple={{surface: true}}
+                                    class="mdc-button"
+                                    class:mdc-button--raised={equalsGroup(selected, turn) && selected.side === 'right'}
+                                    on:click={selectGroup(turn, index, 'right')}
+                                >)</button>
+                            </span>
+                        {:else}
                             <button
                                 use:Ripple={{surface: true}}
                                 class="mdc-button"
-                                class:mdc-button--outlined={!equalsNew(selected, index)}
-                                class:mdc-button--raised={equalsNew(selected, index)}
-                                on:click={selectNew(index)}
+                                class:mdc-button--raised={equalsTurn(selected, turn)}
+                                on:click={selectTurn(turn, index)}
                             >
-                                {#if equalsNew(selected, index)}
-                                    <span class="caret">|</span>
-                                {/if}
+                                {turnToString(equalsTurn(selected, turn) ? selected.turn : turn)}
                             </button>
-                            <button
-                                use:Ripple={{surface: true}}
-                                class="mdc-button"
-                                class:mdc-button--raised={equalsGroup(selected, turn) && selected.side === 'right'}
-                                on:click={selectGroup(turn, index, 'right')}
-                            >)</button>
-                        </span>
-                    {:else}
-                        <button
-                            use:Ripple={{surface: true}}
-                            class="mdc-button"
-                            class:mdc-button--raised={equalsTurn(selected, turn)}
-                            on:click={selectTurn(turn, index)}
-                        >
-                            {turnToString(equalsTurn(selected, turn) ? selected.turn : turn)}
-                        </button>
-                    {/if}
-                {/each}
-                <button
-                    use:Ripple={{surface: true}}
-                    class="mdc-button"
-                    class:mdc-button--outlined={!equalsNew(selected, -1)}
-                    class:mdc-button--raised={equalsNew(selected, -1)}
-                    on:click={selectNew(-1)}
-                >
-                    {#if equalsNew(selected, -1)}
-                        <span class="caret">|</span>
-                    {/if}
-                </button>
+                        {/if}
+                    {/each}
+                </span> -->
             </span>
-        </Tab>
-        <Tab tab="info">
-            <span>Info</span>
         </Tab>
     </Tabs>
     <div class="buttons">
@@ -537,18 +467,18 @@
     </div>
 </div>
 
-{#if show}
+{#if showKeyboard}
     <Keyboard
         bind:double={$double}
         bind:prime={$prime}
         bind:side={$side}
         on:letter={handleLetter}
-        on:previous={handlePrevious}
-        on:next={handleNext}
-        on:group={handleGroup}
-        on:delete={handleDelete}
-        on:insertleft={handleInsertLeft}
-        on:insertright={handleInsertRight}
+        on:previous={selectPrevious}
+        on:next={selectNext}
+        on:group={addGroup}
+        on:delete={deleteSelected}
+        on:insertleft={insertLeft}
+        on:insertright={insertRight}
         disablePrevious={disablePrevious(selected)}
         disableGroup={disableGroup(selected)}
         disableDelete={disableDelete(selected)}
@@ -566,31 +496,8 @@
     .editor.initialShow {
         height: auto;
     }
-    .algo {
-        display: flex;
-        flex-wrap: wrap;
-        gap: .2rem;
-        text-transform: none;
-        max-width: 60ch;
-        margin-block: 1rem;
-    }
-    .turn-group {
-        display: flex;
-        gap: .2rem;
-    }
-    .mdc-button {
-        text-transform: none;
-        height: auto;
-        height: 2em;
-        width: 2em;
-        min-width: min-content;
-        padding: 0 8px 0 8px;
-    }
     h2 {
         margin: 0;
-    }
-    .caret {
-        animation: 1s blink step-end infinite;
     }
 
     @keyframes blink {
@@ -606,5 +513,11 @@
         display: flex;
         justify-content: right;
         gap: .3rem;
+    }
+
+    .info {
+        display: flex;
+        flex-direction: column;
+        margin-inline: 1rem;
     }
 </style>

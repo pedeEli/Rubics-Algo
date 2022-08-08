@@ -93,7 +93,7 @@ interface BeforeInstallPromptEvent extends Event {
 
 
 interface RubicsAlgorithm {
-    description?: string,
+    info?: string,
     turns: Array<Turn | TurnGroup>
 }
 
