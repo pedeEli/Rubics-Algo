@@ -3,6 +3,7 @@
     import TabBar from '@smui/tab-bar'
 
     import {setContext, onMount} from 'svelte'
+    import type {Writable} from 'svelte/store'
 
     type T = $$Generic
     interface $$Slots {
@@ -13,13 +14,13 @@
     export let active: T
 
     $: index = tabs.indexOf(active)
-    $: height = getHeights.get(active)?.()
+    $: height = getHeights.get(active)
 
-    const getHeights = new Map<T, () => number>()
-    setContext('height', (tab: T, getHeight: () => number) => getHeights.set(tab, getHeight))
+    const getHeights = new Map<T, Writable<number>>()
+    setContext('height', (tab: T, height: Writable<number>) => getHeights.set(tab, height))
 
     onMount(() => {
-        height = getHeights.get(active)!()
+        height = getHeights.get(active)
     })
 </script>
 
@@ -28,7 +29,7 @@
         <Label>{tab}</Label>
     </Tab>
 </TabBar>
-<div class="wrapper" style:height={height ? `${height}px` : 'auto'}>
+<div class="wrapper" style:height={$height ? `${$height}px` : 'auto'}>
     <div class="carusal" style:transform="translateX(-{index * 100}%)">
         <slot/>
     </div>

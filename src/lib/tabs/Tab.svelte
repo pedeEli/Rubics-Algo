@@ -1,18 +1,17 @@
 <script lang="ts">
     import {getContext} from 'svelte'
+    import {writable} from 'svelte/store'
+    import type {Writable} from 'svelte/store'
+
 
     export let tab: string
 
-    let element: HTMLDivElement
-    const getHeight = () => {
-        // const {height} = element.getBoundingClientRect()
-        // return height
-        return element.offsetHeight
-    }
-    getContext<(tab: string, getHeight: () => number) => void>('height')(tab, getHeight)
+    let offsetHeight = writable(0)
+
+    getContext<(tab: string, height: Writable<number>) => void>('height')(tab, offsetHeight)
 </script>
 
-<div class="tab" bind:this={element}>
+<div class="tab" bind:offsetHeight={$offsetHeight}>
     <slot/>
 </div>
 

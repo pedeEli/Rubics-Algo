@@ -1,9 +1,7 @@
 <script lang="ts">
-    import Ripple from '@smui/ripple'
     import Button from '@smui/button'
     import TextField from '@smui/textfield'
 
-    import {turnToString} from '$lib/algos'
     import Keyboard from './Keyboard.svelte'
 
     import Tabs, {Tab} from '$lib/tabs'
@@ -21,12 +19,31 @@
     let prime = writable(false)
     let side = writable<SingleFingerSide | FullHandSide | ''>('')
 
-    export let selected: Selected
+    
+    const getFirstSelected = (algo: RubicsAlgorithm): Selected => {
+        if (algo.turns.length === 0)
+            return { type: 'new', index: -1 }
+        const turn = algo.turns[0]
+        if ('turns' in turn)
+            return {
+                type: 'group',
+                index: 0,
+                group: turn,
+                side: 'left'
+            }
+        return {
+            type: 'turn',
+            index: 0,
+            turn
+        }
+    }
+
+    let keyboardSelected: Selected = getFirstSelected(algo)
 
 
-    $: isTurn(selected) && (selected.turn.side = $side as SingleFingerSide | FullHandSide)
-    $: isTurn(selected) && (selected.turn.prime = $prime)
-    $: isTurn(selected) && (selected.turn.double = $double)
+    $: isTurn(keyboardSelected) && (keyboardSelected.turn.side = $side as SingleFingerSide | FullHandSide)
+    $: isTurn(keyboardSelected) && (keyboardSelected.turn.prime = $prime)
+    $: isTurn(keyboardSelected) && (keyboardSelected.turn.double = $double)
 
     const resetKeyboard = () => {
         $side = '',
@@ -57,7 +74,7 @@
     }
 
     const handleLetter = (event: CustomEvent<SingleFingerSide | FullHandSide>) => {
-        const {type, index} = selected
+        const {type, index} = keyboardSelected
         const {turns} = algo
         if (type !== 'new' && type !== 'insert')
             return
@@ -67,8 +84,8 @@
             double: $double as any // why the fuck is this nessesary?????
         }
         if (type === 'insert') {
-            if (selected.group === -1) {
-                selected = {
+            if (keyboardSelected.group === -1) {
+                keyboardSelected = {
                     type: 'turn',
                     turn: newTurn,
                     index
@@ -76,19 +93,19 @@
                 algo.turns = [...turns.slice(0, index), newTurn, ...turns.slice(index)]
                 return
             }
-            const group = turns[selected.group] as TurnGroup
+            const group = turns[keyboardSelected.group] as TurnGroup
             group.turns = [...group.turns.slice(0, index), newTurn, ...group.turns.slice(index)]
-            turns[selected.group] = group
-            selected = {
+            turns[keyboardSelected.group] = group
+            keyboardSelected = {
                 type: 'turn',
                 turn: newTurn,
                 index,
-                group: [group, selected.group]
+                group: [group, keyboardSelected.group]
             }
             return
         }
         if (index === -1) {
-            selected = {
+            keyboardSelected = {
                 type: 'turn',
                 turn: newTurn,
                 index: turns.length
@@ -99,7 +116,7 @@
         const group = turns[index] as TurnGroup
         group.turns.push(newTurn)
         algo.turns[index] = group
-        selected = {
+        keyboardSelected = {
             type: 'turn',
             turn: newTurn,
             index: group.turns.length - 1,
@@ -108,7 +125,7 @@
     }
 
     const selectNew = (index: number) => {
-        selected = {
+        keyboardSelected = {
             type: 'new',
             index
         }
@@ -119,16 +136,15 @@
         $side = turn.side
         $prime = turn.prime
         $double = turn.double
-        selected = {
+        keyboardSelected = {
             type: 'turn',
             turn,
             index,
             group
         }
     }
-
     const selectGroup = (group: TurnGroup, index: number, side: SelectedGroup['side']) => {
-        selected = {
+        keyboardSelected = {
             type: 'group',
             group,
             index,
@@ -136,18 +152,16 @@
         }
         resetKeyboard()
     }
-
     const selectInsert = (index: number, group = -1) => {
         resetKeyboard()
-        selected = {
+        keyboardSelected = {
             type: 'insert',
             index,
             group
         }
     }
-
     const selectPrevious = () => {
-        const {index, type} = selected
+        const {index, type} = keyboardSelected
         const {turns} = algo
         if (type === 'new') {
             if (index === -1) {
@@ -165,7 +179,7 @@
             return selectTurn(group.turns[groupLength - 1], groupLength - 1, [group, index])
         }
         if (type === 'insert') {
-            if (selected.group === -1) {
+            if (keyboardSelected.group === -1) {
                 if (index === 0)
                     return () => {}
                 const previous = turns[index - 1]
@@ -173,13 +187,13 @@
                     return selectGroup(previous, index - 1, 'right')
                 return selectTurn(previous, index - 1)
             }
-            const group = turns[selected.group] as TurnGroup
+            const group = turns[keyboardSelected.group] as TurnGroup
             if (index === 0)
-                return selectGroup(group, selected.group, 'left')
-            return selectTurn(group.turns[index - 1], index - 1, [group, selected.group])
+                return selectGroup(group, keyboardSelected.group, 'left')
+            return selectTurn(group.turns[index - 1], index - 1, [group, keyboardSelected.group])
         }
         if (type === 'group') {
-            if (selected.side === 'right')
+            if (keyboardSelected.side === 'right')
                 return selectNew(index)
             if (index === 0)
                 return () => {}
@@ -188,8 +202,8 @@
                 return selectGroup(previous, index - 1, 'right')
             return selectTurn(previous, index - 1)
         }
-        if (selected.group) {
-            const {group} = selected
+        if (keyboardSelected.group) {
+            const {group} = keyboardSelected
             if (index === 0)
                 return selectGroup(group[0], group[1], 'left')
             const groupTurns = group[0].turns
@@ -202,9 +216,8 @@
             return selectGroup(previous, index - 1, 'right')
         return selectTurn(previous, index - 1)
     }
-
     const selectNext = () => {
-        const {index, type} = selected
+        const {index, type} = keyboardSelected
         const {turns} = algo
         if (type === 'new') {
             if (index === -1)
@@ -212,18 +225,18 @@
             return selectGroup(turns[index] as TurnGroup, index, 'right')
         }
         if (type === 'insert') {
-            if (selected.group === -1) {
+            if (keyboardSelected.group === -1) {
                 const next = algo.turns[index]
                 if ('turns' in next)
                     return selectGroup(next, index, 'left')
                 return selectTurn(next, index)
             }
-            const group = turns[selected.group] as TurnGroup
-            return selectTurn(group.turns[index], index, [group, selected.group])
+            const group = turns[keyboardSelected.group] as TurnGroup
+            return selectTurn(group.turns[index], index, [group, keyboardSelected.group])
         }
         if (type === 'group') {
-            const {group} = selected
-            if (selected.side === 'left') {
+            const {group} = keyboardSelected
+            if (keyboardSelected.side === 'left') {
                 if (group.turns.length === 0)
                     return selectNew(index)
                 return selectTurn(group.turns[0], 0, [group, index])
@@ -235,8 +248,8 @@
                 return selectGroup(next, index + 1, 'left')
             return selectTurn(next, index + 1)
         }
-        if (selected.group) {
-            const {group} = selected
+        if (keyboardSelected.group) {
+            const {group} = keyboardSelected
             const groupTurns = group[0].turns
             if (index === groupTurns.length - 1)
                 return selectNew(group[1])
@@ -249,11 +262,10 @@
             return selectGroup(next, index + 1, 'left')
         return selectTurn(next, index + 1)
     }
-
     const addGroup = () => {
-        const {type, index} = selected
+        const {type, index} = keyboardSelected
         const {turns} = algo
-        if (type === 'insert' && selected.group === -1) {
+        if (type === 'insert' && keyboardSelected.group === -1) {
             algo.turns = [...turns.slice(0, index), {turns: []}, ...turns.slice(index)]
             return selectNew(index)
         }
@@ -262,15 +274,14 @@
         algo.turns = [...turns, {turns: []}]
         return selectNew(algo.turns.length - 1)
     }
-
     const deleteSelected = () => {
-        const {type, index} = selected
+        const {type, index} = keyboardSelected
         const {turns} = algo
         if (type === 'new' || type === 'insert')
             return () => {}
         if (type === 'group') {
-            algo.turns = [...turns.slice(0, index), ...selected.group.turns,...turns.slice(index + 1)]
-            if (selected.side === 'left') {
+            algo.turns = [...turns.slice(0, index), ...keyboardSelected.group.turns,...turns.slice(index + 1)]
+            if (keyboardSelected.side === 'left') {
                 if (algo.turns.length === 0 || index === algo.turns.length)
                     return selectNew(-1)
                 const next = algo.turns[index]
@@ -278,7 +289,7 @@
                     return selectGroup(next, index, 'left')
                 return selectTurn(next, index)
             }
-            const newIndex = index + selected.group.turns.length
+            const newIndex = index + keyboardSelected.group.turns.length
             if (algo.turns.length === 0 || newIndex === algo.turns.length)
                 return selectNew(-1)
             const next = algo.turns[newIndex]
@@ -286,10 +297,10 @@
                 return selectGroup(next, newIndex, 'left')
             return selectTurn(next, newIndex)
         }
-        if (selected.group) {
-            const group = selected.group[0]
+        if (keyboardSelected.group) {
+            const group = keyboardSelected.group[0]
             const {turns} = group
-            const groupIndex = selected.group[1]
+            const groupIndex = keyboardSelected.group[1]
             group.turns = [...turns.slice(0, index), ...turns.slice(index + 1)]
             algo.turns[groupIndex] = group
             if (group.turns.length === 0 || index === group.turns.length) {
@@ -305,34 +316,32 @@
             return selectGroup(next, index, 'left')
         return selectTurn(next, index)
     }
-
     const insertLeft = () => {
-        const {type, index} = selected
+        const {type, index} = keyboardSelected
         if (type === 'new' || type === 'insert')
             return () => {}
         if (type === 'group') {
-            if (selected.side === 'right')
+            if (keyboardSelected.side === 'right')
                 return () => {}
             return selectInsert(index)
         }
-        if (selected.group)
-            return selectInsert(index, selected.group[1])
+        if (keyboardSelected.group)
+            return selectInsert(index, keyboardSelected.group[1])
         return selectInsert(index)
     }
-
     const insertRight = () => {
-        const {type, index} = selected
+        const {type, index} = keyboardSelected
         if (type === 'new' || type === 'insert')
             return () => {}
         if (type === 'group') {
-            if (selected.side === 'left')
+            if (keyboardSelected.side === 'left')
                 return selectInsert(0, index)
             if (index === algo.turns.length - 1)
                 return () => {}
             return selectInsert(index + 1)
         }
-        if (selected.group) {
-            const {group} = selected
+        if (keyboardSelected.group) {
+            const {group} = keyboardSelected
             if (index === group[0].turns.length - 1)
                 return () => {}
             return selectInsert(index + 1, group[1])
@@ -341,7 +350,6 @@
             return () => {}
         return selectInsert(index + 1)
     }
-
 
     const disablePrevious = (selected: Selected) => {
         const {type, index} = selected
@@ -391,6 +399,9 @@
     let activeTab = 'turns'
 
     $: showKeyboard = activeTab === 'turns' && show
+
+    let infoSelected = getFirstSelected(algo)
+    let open = false
 </script>
 
 
@@ -402,7 +413,7 @@
             <SelectableAlgorithm
                 editable
                 bind:algo
-                bind:selected
+                bind:selected={keyboardSelected}
                 on:selectnew={resetKeyboard}
                 on:selectgroup={resetKeyboard}
                 on:selectturn={({detail}) => {
@@ -417,47 +428,8 @@
                 <TextField textarea label="Info" value="" input$resizable={false}/>
                 <SelectableAlgorithm
                     bind:algo
-                    bind:selected
+                    bind:selected={infoSelected}
                 />
-                <!-- <span class="algo">  
-                    {#each algo.turns as turn, index}
-                        {#if 'turns' in turn}
-                            <span class="turn-group">
-                                <button
-                                    use:Ripple={{surface: true}}
-                                    class="mdc-button"
-                                    class:mdc-button--raised={equalsGroup(selected, turn) && selected.side === 'left'}
-                                    on:click={selectGroup(turn, index, 'left')}
-                                >(</button>
-                                {#each turn.turns as t, i}
-                                    <button
-                                        use:Ripple={{surface: true}}
-                                        class="mdc-button"
-                                        class:mdc-button--raised={equalsTurn(selected, t, [turn, index])}
-                                        on:click={selectTurn(t, i, [turn, index])}
-                                    >
-                                        {turnToString(equalsTurn(selected, t, [turn, index]) ? selected.turn : t)}
-                                    </button>
-                                {/each}
-                                <button
-                                    use:Ripple={{surface: true}}
-                                    class="mdc-button"
-                                    class:mdc-button--raised={equalsGroup(selected, turn) && selected.side === 'right'}
-                                    on:click={selectGroup(turn, index, 'right')}
-                                >)</button>
-                            </span>
-                        {:else}
-                            <button
-                                use:Ripple={{surface: true}}
-                                class="mdc-button"
-                                class:mdc-button--raised={equalsTurn(selected, turn)}
-                                on:click={selectTurn(turn, index)}
-                            >
-                                {turnToString(equalsTurn(selected, turn) ? selected.turn : turn)}
-                            </button>
-                        {/if}
-                    {/each}
-                </span> -->
             </span>
         </Tab>
     </Tabs>
@@ -479,11 +451,11 @@
         on:delete={deleteSelected}
         on:insertleft={insertLeft}
         on:insertright={insertRight}
-        disablePrevious={disablePrevious(selected)}
-        disableGroup={disableGroup(selected)}
-        disableDelete={disableDelete(selected)}
-        disableInsertLeft={disableInsertLeft(selected)}
-        disableInsertRight={disableInsertRight(selected)}
+        disablePrevious={disablePrevious(keyboardSelected)}
+        disableGroup={disableGroup(keyboardSelected)}
+        disableDelete={disableDelete(keyboardSelected)}
+        disableInsertLeft={disableInsertLeft(keyboardSelected)}
+        disableInsertRight={disableInsertRight(keyboardSelected)}
     />
 {/if}
 
