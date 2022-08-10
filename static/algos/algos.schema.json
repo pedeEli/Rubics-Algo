@@ -30,7 +30,8 @@
                     "properties": {
                         "side": { "$ref": "#/$defs/fullHandSide" },
                         "prime": { "type": "boolean" },
-                        "double": { "type": "boolean" }
+                        "double": { "type": "boolean" },
+                        "info": { "$ref": "#/$defs/fullHandTurnInfo" }
                     }
                 },
                 {
@@ -66,6 +67,16 @@
         },
         "hand": {
             "enum": ["Left Hand", "Right Hand"]
+        },
+        "thumbPosition": {
+            "enum": ["Front", "Top", "Back", "Bottom"]
+        },
+        "fullHandTurnInfo": {
+            "type": "object",
+            "required": ["thumbPosition"],
+            "properties": {
+                "thumbPosition": { "$ref": "#/$defs/thumbPosition" }
+            }
         },
         "singleTurnInfo": {
             "type": "object",

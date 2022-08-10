@@ -108,7 +108,8 @@ type SingleFingerSide = 'U' | 'u' | 'D' | 'd' | 'F' | 'f' | 'B' | 'b' | 'x' | 'y
 type Turn = {
     side: FullHandSide,
     prime: boolean,
-    double: boolean
+    double: boolean,
+    info?: FullHandTurnInfo
 } | {
     side: SingleFingerSide,
     prime: boolean,
@@ -123,6 +124,11 @@ type Turn = {
 
 type Finger = 'Thumb' | 'Index Finger' | 'Middle Finger' | 'Ring Finger' | 'Pinky Finger'
 type Hand = 'Left Hand' | 'Right Hand'
+type ThumbPosition = 'Front' | 'Top' | 'Back' | 'Bottom'
+
+interface FullHandTurnInfo {
+    thumbPosition: ThumbPosition
+}
 
 interface SingleTurnInfo {
     finger: Finger,
