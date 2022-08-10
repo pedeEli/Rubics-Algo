@@ -61,7 +61,6 @@
     let infoDialogIndex = 0
     const openInfoDialog = (index: number) => () => {
         infoDialog = true
-        edit = false
         infoDialogIndex = index
         infoAlgo = algos[index]
     }
@@ -72,21 +71,6 @@
         algos = newAlgos
         infoDialog = false
         await setDoc($userAlgos.ref, {[title]: newAlgos}, {merge: true})
-    }
-
-    let edit = false
-    let editAlgoValue: RubicsAlgorithm
-    const editAlgo = () => {
-        edit = true
-        editAlgoValue = infoAlgo
-    }
-    const saveAlgo = async () => {
-        if (!editAlgoValue || !$userAlgos)
-            return
-        infoAlgo = editAlgoValue
-        algos[infoDialogIndex] = infoAlgo
-        edit = false
-        await setDoc($userAlgos.ref, {[title]: algos}, {merge: true})
     }
 </script>
 
@@ -111,7 +95,6 @@
         <AlgorithmEditor
             show={addDialog}
             algo={{turns: []}}
-            selected={{type: 'new', index: -1}}
             on:save={handleSave}
         />
     </div>
@@ -142,30 +125,6 @@
     </Content>
 </Dialog>
 
-<!-- <Dialog bind:open={infoDialog}>
-    <Title>Details</Title>
-    <Content>
-        {#if edit}
-            <form on:submit|preventDefault={saveAlgo}>
-                <TextField label="New Algorithm" bind:value={editAlgoValue}/>
-            </form>
-            <Actions>
-                <Button on:click={saveAlgo} disabled={!editAlgoValue}>Save</Button>
-                <Button on:click={() => edit = false}>Cancel</Button>
-            </Actions>
-        {:else}
-            <div>{infoAlgo}</div>
-            {#if $userAlgos}
-                <Actions>
-                    <IconButton class="material-icons" on:click={editAlgo}>edit</IconButton>
-                    {#if algos.length > 1}
-                        <IconButton class="material-icons" on:click={deleteAlgo}>delete</IconButton>
-                    {/if}
-                </Actions>
-            {/if}
-        {/if}
-    </Content>
-</Dialog> -->
 
 <style>
     main {

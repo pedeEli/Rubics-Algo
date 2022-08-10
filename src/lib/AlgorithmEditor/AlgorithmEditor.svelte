@@ -8,6 +8,7 @@
 
     import {writable} from 'svelte/store'
     import {createEventDispatcher} from 'svelte'
+    import type {TransitionConfig} from 'svelte/transition'
 
     import SelectableAlgorithm, {isTurn} from './SelectableAlgorithm.svelte'
     import type {Selected, SelectedTurn, SelectedGroup} from './SelectableAlgorithm.svelte'
@@ -54,10 +55,12 @@
     let editor: HTMLDivElement
     let initialShow = show
     let previousShow = show
+    let overflowHidden = writable(true)
 
     $: if (previousShow !== show) {
         previousShow = show      
         if (show) {
+            $overflowHidden = true
             editor.style.height = 'auto'
             const {height} = editor.getBoundingClientRect()
             editor.style.height = '0px'
@@ -401,11 +404,61 @@
     $: showKeyboard = activeTab === 'turns' && show
 
     let infoSelected = getFirstSelected(algo)
-    let open = false
+    $: if (activeTab === 'info')
+        updateInfoSelected()
+    const updateInfoSelected = () => {
+        if (selectedExists(infoSelected, algo))
+            return
+        infoSelected = getFirstSelected(algo)
+    }
+    const selectedExists = (selected: Selected, algo: RubicsAlgorithm): boolean => {
+        const {type, index} = selected
+        const {turns} = algo
+        if (type === 'new' || type === 'insert')
+            return false
+        if (type === 'group') {
+            return false
+        }
+        const {turn, group} = selected
+        if (group) {
+            const [groupRef, groupIndex] = group
+            const algoRef = turns[groupIndex]
+            if ('turns' in algoRef) {
+                if (algoRef !== groupRef)
+                    return false
+                const turnRef = algoRef.turns[index]
+                return turnRef === turn
+            }
+            return false
+        }
+        return turns[index] === turn
+    }
+
+
+    const fadeIn = (node: Element, {}): TransitionConfig => {
+        const rect = node.getBoundingClientRect()
+        return {
+            duration: 200,
+            css: (t, u) => `
+                opacity: ${t};
+            `
+        }
+    }
+    const fadeOut = (node: Element, {}): TransitionConfig => {
+        const rect = node.getBoundingClientRect()
+        return {
+            duration: 200,
+            css: (t, u) => `
+                opacity: ${t};
+                position: absolute;
+                top: ${rect.top}px;
+            `
+        }
+    }
 </script>
 
 
-<div class="editor" bind:this={editor} class:initialShow>
+<div class="editor" bind:this={editor} class:initialShow style:overflow={$overflowHidden || !show ? 'hidden' : 'visible'}>
     <h2>New Algorithm</h2>
     
     <Tabs tabs={['turns', 'info']} bind:active={activeTab}>
@@ -425,11 +478,21 @@
         </Tab>
         <Tab tab="info">
             <span class="info">
-                <TextField textarea label="Info" value="" input$resizable={false}/>
+                <TextField textarea label="About the Algorithm" value="" input$resizable={false}/>
                 <SelectableAlgorithm
                     bind:algo
                     bind:selected={infoSelected}
                 />
+                {#if infoSelected.type === 'turn'}
+                    <div class="info-cell" in:fadeIn out:fadeOut>
+                        Test
+                    </div>
+                {/if}
+                {#if infoSelected.type === 'group'}
+                    <div class="info-cell" in:fadeIn out:fadeOut>
+                        <TextField textarea label="About the Group" value="" style="width: 100%" input$resizable={false}/>
+                    </div>
+                {/if}
             </span>
         </Tab>
     </Tabs>
@@ -488,8 +551,12 @@
     }
 
     .info {
-        display: flex;
-        flex-direction: column;
+        display: grid;
         margin-inline: 1rem;
+        gap: 1rem;
+    }
+    .info-cell {
+        grid-column: 1 / 2;
+        grid-row: 3 / 4;
     }
 </style>
