@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+html, body {
+    @apply h-full w-full;
+}
+
+body {
+    @apply bg-background dark:bg-background-dark font-sans text-slate-900 dark:text-slate-100;
+}
+
+#__next {
+    @apply contents;
+}
+
+
+.text-shadow {
+    text-shadow: .2rem .5rem .5rem hsl(0 0% 0% / .5);
+}

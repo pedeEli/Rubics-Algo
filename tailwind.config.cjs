@@ -13,6 +13,8 @@ const blueGray = {
   900: '#263238'
 }
 
+const cubeTemplate = '.2fr 1fr 1fr 1fr .2fr'
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
@@ -28,8 +30,17 @@ module.exports = {
         'surface': blueGray[100],
         'surface-dark': blueGray[800],
         'error': colors.red[600]
+      },
+      gap: {
+        'cube': '2px'
+      },
+      gridTemplateColumns: {
+        'cube': cubeTemplate
+      },
+      gridTemplateRows: {
+        'cube': cubeTemplate
       }
-    },
+    }
   },
   plugins: [],
 };
