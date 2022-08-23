@@ -1,8 +1,35 @@
+const colors = require('tailwindcss/colors')
+
+const blueGray = {
+  50: '#eceff1',
+  100: '#cfd8dc',
+  200: '#b0bec5',
+  300: '#90a4ae',
+  400: '#78909c',
+  500: '#607d8b',
+  600: '#546e7a',
+  700: '#455a64',
+  800: '#37474f',
+  900: '#263238'
+}
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'blue-gray': blueGray,
+        'primary': colors.teal[500],
+        'background': blueGray[50],
+        'background-dark': blueGray[900],
+        'secondary': blueGray[200],
+        'secondary-dark': blueGray[600],
+        'surface': blueGray[100],
+        'surface-dark': blueGray[800],
+        'error': colors.red[600]
+      }
+    },
   },
   plugins: [],
 };
