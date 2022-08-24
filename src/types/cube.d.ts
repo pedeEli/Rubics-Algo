@@ -38,4 +38,28 @@ declare module Cube {
     left1?: PLLColor
     left2?: PLLColor
   }
+
+  type OLLSection =
+    'All Corners Oriented' |
+    'All Edges Oriented' |
+    'No Edges Oriented' |
+    'P Shapes' |
+    'W Shapes' |
+    'T Shapes' |
+    'Square Shapes' |
+    'Fish Shapes' |
+    'C Shapes' |
+    'Small Lightning Bolts' |
+    'Big Lightning Bolts' |
+    'L Shapes' |
+    'Knight Move Shapes' |
+    'I Shapes' |
+    'Awkward Shapes'
+
+  type PLLSection =
+    'Edges Only' |
+    'Corners Only' |
+    'Adjacent Corner Swap' |
+    'Diagonal Corner Swap' |
+    'G Permutations'
 }

@@ -8,7 +8,7 @@ html, body {
 }
 
 body {
-    @apply bg-background dark:bg-background-dark font-sans text-slate-900 dark:text-slate-100;
+    @apply bg-background dark:bg-background-dark font-sans text-font dark:text-font-dark;
 }
 
 #__next {
@@ -18,4 +18,13 @@ body {
 
 .text-shadow {
     text-shadow: .2rem .5rem .5rem hsl(0 0% 0% / .5);
+}
+
+:root {
+    --back-button-height: 4rem;
+}
+
+
+.hover-highlight {
+    @apply before:absolute before:inset-0 before:hover:dark:bg-white/10 before:hover:bg-black/10 before:transition-[background-color_300ms];
 }

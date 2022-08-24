@@ -18,7 +18,7 @@ const Home: NextPage = () => {
         <CubeButton href="/oll" text="OLL">
           <CubeButton.OLLCube/>
         </CubeButton>
-        <CubeButton href="/oll" text="PLL">
+        <CubeButton href="/pll" text="PLL">
           <CubeButton.PLLCube/>
         </CubeButton>
       </main>

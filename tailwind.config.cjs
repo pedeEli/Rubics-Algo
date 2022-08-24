@@ -29,7 +29,9 @@ module.exports = {
         'secondary-dark': blueGray[600],
         'surface': blueGray[100],
         'surface-dark': blueGray[800],
-        'error': colors.red[600]
+        'error': colors.red[600],
+        'font': colors.slate[900],
+        'font-dark': colors.slate[100]
       },
       gap: {
         'cube': '2px'
