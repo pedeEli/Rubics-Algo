@@ -18,12 +18,4 @@ const Back = ({href}: BackProps) => {
   )
 }
 
-// .back-button:active {
-//   text-decoration: none;
-// }
-// .text {
-//   font-size: 2rem;
-//   transform: translateY(-3%);
-// }
-
 export default Back

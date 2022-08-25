@@ -1,0 +1,107 @@
+[
+    {
+        "turns": [
+            {
+                "side": "x",
+                "prime": true,
+                "double": false
+            },
+            {
+                "turns": [
+                    {
+                        "side": "L",
+                        "prime": true,
+                        "double": false
+                    },
+                    {
+                        "side": "U",
+                        "prime": false,
+                        "double": false
+                    },
+                    {
+                        "side": "L",
+                        "prime": false,
+                        "double": false
+                    },
+                    {
+                        "side": "D",
+                        "prime": true,
+                        "double": false
+                    }
+                ]
+            },
+            {
+                "turns": [
+                    {
+                        "side": "L",
+                        "prime": true,
+                        "double": false
+                    },
+                    {
+                        "side": "U",
+                        "prime": true,
+                        "double": false
+                    },
+                    {
+                        "side": "L",
+                        "prime": false,
+                        "double": false
+                    },
+                    {
+                        "side": "D",
+                        "prime": false,
+                        "double": false
+                    }
+                ]
+            },
+            {
+                "turns": [
+                    {
+                        "side": "L",
+                        "prime": true,
+                        "double": false
+                    },
+                    {
+                        "side": "U",
+                        "prime": true,
+                        "double": false
+                    },
+                    {
+                        "side": "L",
+                        "prime": false,
+                        "double": false
+                    },
+                    {
+                        "side": "D",
+                        "prime": true,
+                        "double": false
+                    }
+                ]
+            },
+            {
+                "turns": [
+                    {
+                        "side": "L",
+                        "prime": true,
+                        "double": false
+                    },
+                    {
+                        "side": "U",
+                        "prime": false,
+                        "double": false
+                    },
+                    {
+                        "side": "L",
+                        "prime": false,
+                        "double": false
+                    },
+                    {
+                        "side": "D",
+                        "prime": false,
+                        "double": false
+                    }
+                ]
+            }
+        ]
+    }
+]

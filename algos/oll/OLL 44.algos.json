@@ -1,0 +1,40 @@
+[
+    {
+        "turns": [
+            {
+                "side": "F",
+                "prime": false,
+                "double": false
+            },
+            {
+                "turns": [
+                    {
+                        "side": "U",
+                        "prime": false,
+                        "double": false
+                    },
+                    {
+                        "side": "R",
+                        "prime": false,
+                        "double": false
+                    },
+                    {
+                        "side": "U",
+                        "prime": true,
+                        "double": false
+                    },
+                    {
+                        "side": "R",
+                        "prime": true,
+                        "double": false
+                    }
+                ]
+            },
+            {
+                "side": "F",
+                "prime": true,
+                "double": false
+            }
+        ]
+    }
+]

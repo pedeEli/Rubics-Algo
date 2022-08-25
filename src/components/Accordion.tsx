@@ -22,7 +22,7 @@ const panelClassName = (isOpen: boolean) => {
   return cls
 }
 
-Accordion.Panel = ({title, children, open = false}: PanelProps) => {
+const Panel = ({title, children, open = false}: PanelProps) => {
   const [isOpen, setOpen] = useState(open)
   const ref = useRef<HTMLDivElement>(null)
 
@@ -50,5 +50,6 @@ Accordion.Panel = ({title, children, open = false}: PanelProps) => {
     </div>
   )
 }
+Accordion.Panel = Panel
 
 export default Accordion

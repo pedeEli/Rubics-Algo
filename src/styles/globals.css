@@ -28,3 +28,7 @@ body {
 .hover-highlight {
     @apply before:absolute before:inset-0 before:hover:dark:bg-white/10 before:hover:bg-black/10 before:transition-[background-color_300ms];
 }
+
+.cube-bg {
+    @apply rounded-2xl overflow-hidden bg-secondary dark:bg-secondary-dark p-2;
+}

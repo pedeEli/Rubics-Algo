@@ -41,6 +41,9 @@ module.exports = {
       },
       gridTemplateRows: {
         'cube': cubeTemplate
+      },
+      borderRadius: {
+        'cube': '1rem'
       }
     }
   },

@@ -1,4 +1,4 @@
-declare module Cube {
+declare namespace Cube {
   type CornerRotation = 0 | 1 | 2
   type EdgeRotation = 0 | 1
   

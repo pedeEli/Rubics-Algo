@@ -1,0 +1,87 @@
+[
+    {
+        "turns": [
+            {
+                "turns": [
+                    {
+                        "side": "r",
+                        "prime": false,
+                        "double": false
+                    },
+                    {
+                        "side": "U",
+                        "prime": false,
+                        "double": false,
+                        "info": {
+                            "finger": "Index Finger",
+                            "hand": "Right Hand"
+                        }
+                    },
+                    {
+                        "side": "R",
+                        "prime": true,
+                        "double": false
+                    },
+                    {
+                        "side": "U",
+                        "prime": true,
+                        "double": false
+                    }
+                ]
+            },
+            {
+                "side": "M",
+                "prime": true,
+                "double": true,
+                "info": {
+                    "first": {
+                        "finger": "Ring Finger",
+                        "hand": "Right Hand"
+                    },
+                    "second": {
+                        "finger": "Ring Finger",
+                        "hand": "Left Hand"
+                    }
+                }
+            },
+            {
+                "turns": [
+                    {
+                        "side": "U",
+                        "prime": false,
+                        "double": false
+                    },
+                    {
+                        "side": "R",
+                        "prime": false,
+                        "double": false
+                    },
+                    {
+                        "side": "U",
+                        "prime": true,
+                        "double": false
+                    },
+                    {
+                        "side": "R",
+                        "prime": true,
+                        "double": false
+                    }
+                ]
+            },
+            {
+                "side": "U",
+                "prime": true,
+                "double": false
+            },
+            {
+                "side": "M",
+                "prime": true,
+                "double": false,
+                "info": {
+                    "finger": "Ring Finger",
+                    "hand": "Right Hand"
+                }
+            }
+        ]
+    }
+]

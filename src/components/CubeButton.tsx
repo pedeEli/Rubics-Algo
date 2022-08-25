@@ -10,7 +10,7 @@ interface CubeButtonProps {
 const CubeButton = ({children, href, text}: CubeButtonProps) => {
   return (
     <Link href={href}>
-      <div className="w-full h-full rounded-2xl overflow-hidden bg-secondary dark:bg-secondary-dark p-2">
+      <div className="w-full h-full cube-bg">
         <div className="w-full aspect-square grid">
           <div className="col-start-1 row-start-1 w-full h-full">
             {children}
@@ -35,7 +35,7 @@ const ollClassName = (isPiece: boolean, isCenter = false) => {
     : ''
 }
 
-CubeButton.OLLCube = ({
+const OLLCube = ({
   topLeft = 0,
   top = 0,
   topRight = 0,
@@ -74,6 +74,7 @@ CubeButton.OLLCube = ({
     </div>
   )
 }
+CubeButton.OLLCube = OLLCube
 
 
 const Arrow = ({x1, x2, y1, y2}: Cube.ArrowProps) => {
@@ -99,7 +100,7 @@ const Arrow = ({x1, x2, y1, y2}: Cube.ArrowProps) => {
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" className={svgClass}>
       <path
         d={`M${posx1(x1)} ${posy1(y1)} L${posx2(x2)} ${posy2(y2)} L${posx2(hx1)} ${posy2(hy1)} M${posx2(x2)} ${posy2(y2)} L${posx2(hx2)} ${posy2(hy2)}`}
-        stroke-width="10" stroke-linecap="round" stroke-linejoin="round"
+        strokeWidth="10" strokeLinecap="round" strokeLinejoin="round"
       />
     </svg>
   )
@@ -116,7 +117,7 @@ const pllClassName = (color: Cube.PLLColor) => {
   return 'bg-blue-500'
 }
 
-CubeButton.PLLCube = ({
+const PLLCube = ({
   arrows = [],
   top0 = 0,
   top1 = 0,
@@ -160,10 +161,11 @@ CubeButton.PLLCube = ({
         <div className={pllClassName(bottom0)}></div>
       </div>
       <div className="grid grid-cols-cube grid-rows-cube aspect-square col-start-1 row-start-1 gap-cube">
-        {arrows.map(arrow => <Arrow {...arrow}/>)}
+        {arrows.map((arrow, index) => <Arrow key={index} {...arrow}/>)}
       </div>
     </div>
   )
 }
+CubeButton.PLLCube = PLLCube
 
 export default CubeButton
