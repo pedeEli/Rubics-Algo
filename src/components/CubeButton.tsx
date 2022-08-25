@@ -10,7 +10,7 @@ interface CubeButtonProps {
 const CubeButton = ({children, href, text}: CubeButtonProps) => {
   return (
     <Link href={href}>
-      <div className="w-full h-full cube-bg">
+      <div className="w-full h-full cube-bg select-none cursor-pointer relative hover-highlight">
         <div className="w-full aspect-square grid">
           <div className="col-start-1 row-start-1 w-full h-full">
             {children}
