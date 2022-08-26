@@ -8,19 +8,25 @@ import "../styles/globals.css";
 
 import Login from '@/components/svg/Login'
 import Fab from '@/components/button/Fab'
+import Dialog from '@/components/feedback/Dialog'
+import {useState} from 'react'
 
 const MyApp: AppType = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
+  const [open, setOpen] = useState(false)
   return (
     <SessionProvider session={session}>
       <Component {...pageProps}/>
       <div className="fixed bottom-3 right-3">
-        <Fab variant="raised" color="secondary">
+        <Fab onClick={() => setOpen(true)} variant="raised" color="secondary">
           <Login/>
         </Fab>
       </div>
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <h1>Hello World</h1>
+      </Dialog>
     </SessionProvider>
   );
 };

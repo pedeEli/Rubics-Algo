@@ -4,5 +4,6 @@
             "fileMatch": ["*.algos.json"],
             "url": "/algos.schema.json"
         }
-    ]
+    ],
+    "editor.tabSize": 2
 }
