@@ -1,9 +1,9 @@
 import Back from '@/components/Back'
 import Algorithm from '@/components/Algorithm'
-import {trpc} from '@/utils/trpc'
 import ollCubes from '@/data/OLLCubes'
 import pllCubes from '@/data/PLLCubes'
 import CubeButton from '@/components/CubeButton'
+import Button from '@/components/button/Button'
 
 interface AlgoListProps<Type extends 'oll' | 'pll'> {
   type: Type,
@@ -25,9 +25,9 @@ const AlgoList = <Props extends AlgoListProps<'oll'> | AlgoListProps<'pll'>>(pro
           ? <CubeButton.OLLCube {...ollCubes[props.section][props.name]}/>
           : <CubeButton.PLLCube {...pllCubes[props.section][props.name]}/>}
         </div>
-        <div className="self-center">
+        <div className="self-center flex flex-col items-start gap-2">
           {props.defaultAlgos.map((algo, index) => {
-            return <button className="bg-primary px-4 py-2 text-lg rounded-[0.25rem] shadow-md" key={index}><Algorithm algo={algo}/></button>
+            return <Button key={index} variant="raised"><Algorithm algo={algo}/></Button>
           })}
         </div>
       </div>

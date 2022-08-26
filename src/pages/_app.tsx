@@ -6,13 +6,21 @@ import superjson from "superjson";
 import { SessionProvider } from "next-auth/react";
 import "../styles/globals.css";
 
+import Login from '@/components/svg/Login'
+import Fab from '@/components/button/Fab'
+
 const MyApp: AppType = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
   return (
     <SessionProvider session={session}>
-      <Component {...pageProps} />
+      <Component {...pageProps}/>
+      <div className="fixed bottom-3 right-3">
+        <Fab variant="raised" color="secondary">
+          <Login/>
+        </Fab>
+      </div>
     </SessionProvider>
   );
 };

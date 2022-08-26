@@ -1,4 +1,5 @@
 const colors = require('tailwindcss/colors')
+const plugin = require('tailwindcss/plugin')
 
 const blueGray = {
   50: '#eceff1',
@@ -47,5 +48,10 @@ module.exports = {
       }
     }
   },
-  plugins: [],
+  plugins: [
+    plugin(({addVariant, addComponents}) => {
+      addVariant('can-hover', '@media (any-hover: hover)')
+      addVariant('no-hover', '@media (any-hover: none)')
+    })
+  ],
 };

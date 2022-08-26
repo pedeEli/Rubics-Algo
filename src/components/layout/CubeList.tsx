@@ -1,6 +1,6 @@
 import type {ReactNode} from 'react'
 import CubeButton from '@/components/CubeButton'
-import Accordion from '@/components/Accordion'
+import Accordion from '@/components/layout/Accordion'
 import Back from '@/components/Back'
 
 interface CubeListProps<Heading extends 'oll' | 'pll'> {

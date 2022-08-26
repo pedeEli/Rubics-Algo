@@ -1,5 +1,5 @@
 import type {NextPage} from 'next'
-import CubeList from '@/components/CubeList'
+import CubeList from '@/components/layout/CubeList'
 import CubeButton from '@/components/CubeButton'
 import cubes from '@/data/PLLCubes'
 
