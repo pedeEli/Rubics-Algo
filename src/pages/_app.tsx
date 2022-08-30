@@ -6,27 +6,14 @@ import superjson from "superjson";
 import { SessionProvider } from "next-auth/react";
 import "../styles/globals.css";
 
-import Login from '@/components/svg/Login'
-import Fab from '@/components/button/Fab'
-import Dialog from '@/components/feedback/Dialog'
-import {useState} from 'react'
-
 const MyApp: AppType = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
-  const [open, setOpen] = useState(false)
   return (
     <SessionProvider session={session}>
       <Component {...pageProps}/>
-      <div className="fixed bottom-3 right-3">
-        <Fab onClick={() => setOpen(true)} variant="raised" color="secondary">
-          <Login/>
-        </Fab>
-      </div>
-      <Dialog open={open} onClose={() => setOpen(false)}>
-        <h1>Hello World</h1>
-      </Dialog>
+      <Login/>
     </SessionProvider>
   );
 };
@@ -59,3 +46,39 @@ export default withTRPC<AppRouter>({
    */
   ssr: false,
 })(MyApp);
+
+
+import LoginSVG from '@/components/svg/Login'
+import PersonSVG from '@/components/svg/Person'
+import Fab from '@/components/button/Fab'
+import {useSession} from 'next-auth/react'
+import {useRouter} from 'next/router'
+
+const Login = () => {
+  const router = useRouter()
+  const session = useSession()
+
+  if (/^\/(login|account)/.test(router.pathname))
+    return <></>
+
+  return (
+    <div className="fixed bottom-3 right-3">
+      {session.status === 'authenticated'
+      ? <Fab
+        href="/account"
+        variant="raised"
+        color="secondary"
+      >
+        <PersonSVG/>
+      </Fab>
+      : <Fab
+        href="/login"
+        variant="raised"
+        color="secondary"
+      >
+        <LoginSVG/>
+      </Fab>
+      }
+    </div>
+  )
+}

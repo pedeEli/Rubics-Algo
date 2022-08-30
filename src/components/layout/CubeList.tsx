@@ -16,7 +16,7 @@ const CubeList = <Heading extends 'oll' | 'pll'>({cubes, heading, render}: CubeL
     <Back href='/'/>
     <main className="w-4/5 max-w-3xl mx-auto" style={{paddingTop: 'var(--back-button-height)'}}>
       <div className="py-2"/>
-      <h1 className="text-4xl">{heading.toUpperCase()}</h1>
+      <h1 className="text-4xl font-bold">{heading.toUpperCase()}</h1>
       <div className="py-2"/>
       <Accordion>
         {Object.entries(cubes).map(([title, section]) => {

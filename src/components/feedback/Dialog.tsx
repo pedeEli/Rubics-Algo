@@ -9,7 +9,7 @@ interface DialogProps {
 const Dialog = ({open, onClose, children}: DialogProps) => {
   return <>{open &&
     <div className="fixed inset-0 bg-black/20 dark:bg-white/20 z-[9999] grid place-content-center" onClick={onClose}>
-      <div className="w-96 h-48 bg-background dark:bg-background-dark rounded-2xl px-6 py-3" onClick={event => event.stopPropagation()}>
+      <div className="m-6 bg-background dark:bg-background-dark rounded-2xl px-8 py-6" onClick={event => event.stopPropagation()}>
         {children}
       </div>
     </div>

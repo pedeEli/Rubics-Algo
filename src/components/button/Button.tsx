@@ -1,14 +1,22 @@
-import type {ReactNode, default as React} from 'react'
+import type {ReactNode, MouseEvent as ReactMouseEvent, ButtonHTMLAttributes, AnchorHTMLAttributes} from 'react'
+import Link from 'next/link'
 
 type Color = 'primary' | 'secondary'
 type Variant = 'normal' | 'raised'
-export interface ButtonProps {
+export type ButtonProps = {
   children: ReactNode[] | ReactNode,
   className?: string,
   color?: Color,
-  variant?: Variant,
-  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void
-}
+  variant?: Variant
+} & ({
+  onClick?: (event: ReactMouseEvent<HTMLButtonElement>) => void,
+  type?: ButtonHTMLAttributes<HTMLButtonElement>['type'],
+  href?: undefined
+} | {
+  onClick?: (event: ReactMouseEvent<HTMLAnchorElement>) => void,
+  type?: AnchorHTMLAttributes<HTMLAnchorElement>['type'],
+  href: string
+})
 
 
 export const textClassName = (color: Color, variant: Variant) => {
@@ -30,9 +38,21 @@ export const bgClassName = (color: Color, variant: Variant) => {
   return 'bg-secondary dark:bg-secondary-dark before:hover:bg-white/10 before:focus:bg-white/20 shadow-md'
 }
 
-const Button = ({children, className = '', color = 'primary', variant = 'normal', onClick}: ButtonProps) => {
+const Button = (props: ButtonProps) => {
+  const {children, className = '', color = 'primary', variant = 'normal'} = props
+
+  if (props.href !== undefined) {
+    return (
+      <Link href={props.href} className={`${className} ${textClassName(color, variant)} ${bgClassName(color, variant)} focus:outline-none relative before:absolute before:inset-0 px-4 py-2 rounded-[0.25rem] block`}>
+        <a type={props.type} onClick={event => props.onClick && props.onClick(event)}>
+          {children}
+        </a>
+      </Link>
+    )
+  }
+
   return (
-    <button onClick={event => onClick && onClick(event)} className={`${className} ${textClassName(color, variant)} ${bgClassName(color, variant)} focus:outline-none relative before:absolute before:inset-0 px-4 py-2 rounded-[0.25rem]`}>
+    <button type={props.type} onClick={event => props.onClick && props.onClick(event)} className={`${className} ${textClassName(color, variant)} ${bgClassName(color, variant)} focus:outline-none relative before:absolute before:inset-0 px-4 py-2 rounded-[0.25rem]`}>
       {children}
     </button>
   )
