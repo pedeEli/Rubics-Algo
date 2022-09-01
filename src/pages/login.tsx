@@ -27,9 +27,22 @@ const Login: NextPage<ServerSideProps> = ({providers}) => {
 export default Login
 
 
-export const getServerSideProps: GetServerSideProps<ServerSideProps> = async () => {
-  const providers = await getProviders()
+import {unstable_getServerSession} from 'next-auth/next'
+import {authOptions} from '@/pages/api/auth/[...nextauth]'
 
+export const getServerSideProps: GetServerSideProps<ServerSideProps> = async ({req, res}) => {
+  const session = await unstable_getServerSession(req, res, authOptions)
+
+  if (session) {
+    return {
+      redirect: {
+        statusCode: 301,
+        destination: '/account'
+      }
+    }
+  }
+
+  const providers = await getProviders()
   if (!providers) {
     return {
       notFound: true

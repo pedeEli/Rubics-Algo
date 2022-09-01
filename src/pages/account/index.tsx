@@ -1,6 +1,6 @@
 import type {NextPage, GetServerSideProps} from 'next';
 import type {BuiltInProviderType} from 'next-auth/providers';
-import {getProviders, useSession, signOut, type LiteralUnion, type ClientSafeProvider} from 'next-auth/react'
+import {getProviders, signOut, type LiteralUnion, type ClientSafeProvider} from 'next-auth/react'
 import Back from '@/components/Back'
 import Button from '@/components/button/Button'
 
@@ -9,7 +9,6 @@ interface ServerSideProps {
 }
 
 const Account: NextPage<ServerSideProps> = ({providers}) => {
-  const session = useSession()
   return <>
     <Back href="/"/>
     <main className="max-w-3xl mx-auto bg-surface dark:bg-surface-dark p-7 h-full" style={{paddingTop: 'var(--back-button-height)'}}>
@@ -24,9 +23,22 @@ const Account: NextPage<ServerSideProps> = ({providers}) => {
 export default Account
 
 
-export const getServerSideProps: GetServerSideProps<ServerSideProps> = async () => {
-  const providers = await getProviders()
+import {unstable_getServerSession} from 'next-auth/next'
+import {authOptions} from '@/pages/api/auth/[...nextauth]'
 
+export const getServerSideProps: GetServerSideProps<ServerSideProps> = async ({req, res}) => {
+  const session = await unstable_getServerSession(req, res, authOptions)
+
+  if (!session) {
+    return {
+      redirect: {
+        statusCode: 301,
+        destination: '/login'
+      }
+    }
+  }
+
+  const providers = await getProviders()
   if (!providers) {
     return {
       notFound: true
