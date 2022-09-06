@@ -32,4 +32,18 @@ body {
     .cube-bg {
         @apply rounded-2xl overflow-hidden bg-secondary dark:bg-secondary-dark p-2;
     }
+
+    
+    .caret {
+        animation: 1s blink step-end infinite;
+    }
+
+    @keyframes blink {
+        from, to {
+            color: inherit;
+        }
+        50% {
+            color: transparent;
+        }
+    }
 }

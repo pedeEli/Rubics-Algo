@@ -37,7 +37,7 @@ const Panel = ({title, children, open = false}: PanelProps) => {
       return
     }
     panel.style.height = '0'
-  })
+  }, [isOpen])
 
   return (
     <div className={panelClassName(isOpen)}>
