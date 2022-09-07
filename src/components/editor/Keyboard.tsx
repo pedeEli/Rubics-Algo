@@ -68,9 +68,6 @@ const Keyboard = ({
       return
     const div = ref.current!
     div.style.transform = 'translateY(110%)'
-    div.addEventListener('transitionend', () => {
-      setRender(false)
-    }, {once: true})
   }, [show])
 
   useEffect(() => {
@@ -81,8 +78,14 @@ const Keyboard = ({
     div.style.transform = 'translateY(0%)'
   }, [render])
 
+  const handleTransitionEnd = () => {
+    if (show)
+      return
+    setRender(false)
+  }
+
   return <>{render &&
-    <div ref={ref} className="transition-transform translate-y-[110%] shadow-[0_-.1rem_2rem_rgba(0,0,0,.2)] fixed bottom-0 left-0 right-0 flex justify-center text-lg z-20 bg-surface dark:bg-surface-dark">
+    <div ref={ref} onTransitionEnd={handleTransitionEnd} className="transition-transform translate-y-[110%] shadow-[0_-.1rem_2rem_rgba(0,0,0,.2)] fixed bottom-0 left-0 right-0 flex justify-center text-lg z-20 bg-surface dark:bg-surface-dark">
       <div className="keyboard-h:aspect-[12/4.5] keyboard-w:aspect-[12/4.5] keyboard-h:grid-cols-[repeat(12,1fr)] keyboard-w:grid-cols-[repeat(12,1fr)] max-w-sm w-full grid grid-cols-[repeat(6,1fr)] aspect-[6/5] auto-rows-[1fr] px-[6px] py-1 gap-1">
         <button className={`${togglableKey(prime)} col-span-3`}  onClick={onPrime}  disabled={disablePrimeDouble}>Prime</button>
         <button className={`${togglableKey(double)} col-span-3`} onClick={onDouble} disabled={disablePrimeDouble}>Double</button>

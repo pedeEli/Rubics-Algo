@@ -106,9 +106,6 @@ const Editor = ({show}: EditorProps) => {
       return
     const editor = ref.current!
     editor.style.height = '0px'
-    editor.addEventListener('transitionend', () => {
-      setRender(false)
-    }, {once: true})
   }, [show])
 
   useEffect(() => {
@@ -121,6 +118,12 @@ const Editor = ({show}: EditorProps) => {
     editor.getBoundingClientRect()
     editor.style.height = `${height}px`
   }, [render])
+
+  const handleTransitionEnd = () => {
+    if (show)
+      return
+    setRender(false)
+  }
 
   const algo = useAlgo({turns: []})
   const [selected, setSelected] = useState<Selected>({type: 'new', index: -1})
@@ -469,7 +472,7 @@ const Editor = ({show}: EditorProps) => {
 
   return <>
     {render &&
-      <div ref={ref} className="transition-[height_300ms] h-0 overflow-hidden">
+      <div ref={ref} onTransitionEnd={handleTransitionEnd} className="transition-[height_300ms] h-0 overflow-hidden">
         <Algorithm.Editable algo={algo.ref} selected={selected} onSelect={setSelected}/>
         <div className="p-2"/>
       </div>}

@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 
-import CubeButton from '@/components/CubeButton'
+import CubeButton from '@/components/button/CubeButton'
 
 const Home: NextPage = () => {
   return (

@@ -24,29 +24,46 @@ const panelClassName = (isOpen: boolean) => {
 
 const Panel = ({title, children, open = false}: PanelProps) => {
   const [isOpen, setOpen] = useState(open)
+  const [render, setRender] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const panel = ref.current!
-    if (isOpen) {
-      panel.style.height = 'auto'
-      const {height} = panel.getBoundingClientRect()
-      panel.style.height = '0'
-      panel.getBoundingClientRect()
-      panel.style.height = `${height}px`
+    if (isOpen && !render)
+      return setRender(true)
+    if (!render)
       return
-    }
+    const panel = ref.current!
     panel.style.height = '0'
   }, [isOpen])
 
+  useEffect(() => {
+    if (!render)
+      return
+    const panel = ref.current!
+    panel.style.height = 'auto'
+    const {height} = panel.getBoundingClientRect()
+    panel.style.height = '0'
+    panel.getBoundingClientRect()
+    panel.style.height = `${height}px`
+  }, [render])
+
+  const handleTransitionEnd = () => {
+    if (isOpen)
+      return
+    setRender(false)
+  }
+
   return (
     <div className={panelClassName(isOpen)}>
-      <h2 className="cursor-pointer hover-highlight relative bg-surface dark:bg-surface-dark px-6 py-3" onClick={() => setOpen(!isOpen)}>{title}</h2>
-      <div ref={ref} className="transition-[height_300ms] bg-surface dark:bg-surface-dark px-6 h-0">
-        <div className="pt-3"/>
-        {children}
-        <div className="pt-3"/>
-      </div>
+      <button className="cursor-pointer hover-highlight relative text-left bg-surface dark:bg-surface-dark px-6 py-3 w-full" onClick={() => setOpen(!isOpen)}>
+        <h2>{title}</h2>
+      </button>
+      {render &&
+        <div ref={ref} onTransitionEnd={handleTransitionEnd} className="transition-[height_300ms] bg-surface dark:bg-surface-dark px-6 h-0">
+          <div className="pt-3"/>
+          {children}
+          <div className="pt-3"/>
+        </div>}
     </div>
   )
 }

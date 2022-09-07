@@ -1,5 +1,5 @@
 import type {ReactNode} from 'react'
-import CubeButton from '@/components/CubeButton'
+import CubeButton from '@/components/button/CubeButton'
 import Accordion from '@/components/layout/Accordion'
 import Back from '@/components/Back'
 
