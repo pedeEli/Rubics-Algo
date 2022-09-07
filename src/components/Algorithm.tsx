@@ -46,14 +46,14 @@ export interface SelectedInsert {
   index: number,
   group: number
 }
-export type Selected = SelectedTurn | SelectedGroup | SelectedNew | SelectedInsert;
+export type Selected = SelectedTurn | SelectedGroup | SelectedNew | SelectedInsert
 
-export const isTurn = (selected: Selected): selected is SelectedTurn => selected.type === 'turn'
-export const isGroup = (selected: Selected): selected is SelectedGroup => selected.type === 'group'
-export const isNew = (selected: Selected): selected is SelectedNew => selected.type === 'new'
-export const isInsert = (selected: Selected): selected is SelectedInsert => selected.type === 'insert'
+export const isTurn = (selected?: Selected): selected is SelectedTurn => selected?.type === 'turn'
+export const isGroup = (selected?: Selected): selected is SelectedGroup => selected?.type === 'group'
+export const isNew = (selected?: Selected): selected is SelectedNew => selected?.type === 'new'
+export const isInsert = (selected?: Selected): selected is SelectedInsert => selected?.type === 'insert'
 
-const equalsTurn = (selected: Selected, turn: Algo.Turn, group?: SelectedTurn['group']): selected is SelectedTurn => {
+const equalsTurn = (selected: Selected | undefined, turn: Algo.Turn, group?: SelectedTurn['group']): selected is SelectedTurn => {
   if (!isTurn(selected))
       return false
   if (!group)
@@ -62,9 +62,9 @@ const equalsTurn = (selected: Selected, turn: Algo.Turn, group?: SelectedTurn['g
       return false
   return selected.turn === turn && selected.group[0] === group[0] && selected.group[1] === group[1]
 }
-const equalsGroup = (selected: Selected, group: Algo.TurnGroup): selected is SelectedGroup => isGroup(selected) && selected.group === group
-const equalsNew = (selected: Selected, index: number): selected is SelectedNew => isNew(selected) && selected.index === index
-const equalsInsert = (selected: Selected, index: number, group = -1): selected is SelectedInsert => {
+const equalsGroup = (selected: Selected | undefined, group: Algo.TurnGroup): selected is SelectedGroup => isGroup(selected) && selected.group === group
+const equalsNew = (selected: Selected | undefined, index: number): selected is SelectedNew => isNew(selected) && selected.index === index
+const equalsInsert = (selected: Selected | undefined, index: number, group = -1): selected is SelectedInsert => {
   return isInsert(selected)
       && selected.index === index
       && selected.group === group
@@ -83,32 +83,32 @@ const classNames = (selected: boolean, outline = false) => {
 
 interface EditableAlgorithmProps {
   algo: Algo.RubicsAlgorithm,
-  selected: Selected,
-  onSelect: (selected: Selected) => void
+  selected: Selected | undefined,
+  onSelect: (selected: Selected, event: React.MouseEvent) => void
 }
 
 const EditableAlgorithm = ({algo, selected, onSelect}: EditableAlgorithmProps) => {
-  const selectNew = (index: number) => () => {
+  const selectNew = (index: number) => (event: React.MouseEvent) => {
     onSelect({
       type: 'new',
       index
-    })
+    }, event)
   }
-  const selectTurn = (turn: Algo.Turn, index: number, group?: SelectedTurn['group']) => () => {
+  const selectTurn = (turn: Algo.Turn, index: number, group?: SelectedTurn['group']) => (event: React.MouseEvent) => {
     onSelect({
       type: 'turn',
       turn,
       index,
       group
-    })
+    }, event)
   }
-  const selectGroup = (group: Algo.TurnGroup, index: number, side: SelectedGroup['side']) => () => {
+  const selectGroup = (group: Algo.TurnGroup, index: number, side: SelectedGroup['side']) => (event: React.MouseEvent) => {
     onSelect({
       type: 'group',
       group,
       index,
       side
-    })
+    }, event)
   }
 
   const newIsSelected = equalsNew(selected, -1)

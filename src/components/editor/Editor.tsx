@@ -127,6 +127,7 @@ const Editor = ({show}: EditorProps) => {
 
   const algo = useAlgo({turns: []})
   const [selected, setSelected] = useState<Selected>({type: 'new', index: -1})
+  const [deselected, setDeselected] = useState(false)
 
   const side = isTurn(selected) ? selected.turn.side : ''
   const prime = isTurn(selected) && selected.turn.prime
@@ -470,14 +471,28 @@ const Editor = ({show}: EditorProps) => {
   const disableInsertLeft = getDisableInsertLeft()
   const disableInsertRight = getDisableInsertRight()
 
+  const deselect = () => {
+    setDeselected(true)
+  }
+  useEffect(() => {
+    if (!window)
+      return
+    window.addEventListener('click', deselect)
+    return () => window.removeEventListener('click', deselect)
+  }, [])
+
   return <>
     {render &&
       <div ref={ref} onTransitionEnd={handleTransitionEnd} className="transition-[height_300ms] h-0 overflow-hidden">
-        <Algorithm.Editable algo={algo.ref} selected={selected} onSelect={setSelected}/>
+        <Algorithm.Editable algo={algo.ref} selected={deselected ? undefined : selected} onSelect={(s, e) => {
+          e.stopPropagation()
+          setSelected(s)
+          setDeselected(false)
+        }}/>
         <div className="p-2"/>
       </div>}
     <Keyboard
-      show={show}
+      show={!deselected && show}
 
       side={side}
       double={double}

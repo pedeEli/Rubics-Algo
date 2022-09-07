@@ -31,7 +31,10 @@ const AlgoList = <Props extends AlgoListProps<'oll'> | AlgoListProps<'pll'>>(pro
         <h1 className="text-4xl text-center font-bold col-start-1 col-end-3 row-start-1">
           {props.type === 'pll' ? `${props.name} Permutation` : props.name}
         </h1>
-        {session.status === 'authenticated' && <IconButton onClick={() => setShowEditor(!showEditor)} className="col-start-2 row-start-1 justify-self-end"><AddSVG/></IconButton>}
+        {session.status === 'authenticated' && <IconButton onClick={e => {
+          e.stopPropagation()
+          setShowEditor(!showEditor)
+        }} className="col-start-2 row-start-1 justify-self-end"><AddSVG/></IconButton>}
       </div>
       <div className="py-2"/>
       {session.status === 'authenticated' && <Editor show={showEditor}/>}
