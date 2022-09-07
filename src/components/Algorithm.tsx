@@ -125,7 +125,7 @@ const EditableAlgorithm = ({algo, selected, onSelect}: EditableAlgorithmProps) =
         return <React.Fragment key={index}>
           {insertButton}
           <span className="flex gap-1">
-            <button className={classNames(equalsGroup(selected, turn) && selected.side === 'left')} onClick={selectGroup(turn, index, 'left')}>&#40;</button>
+            <button className={classNames(equalsGroup(selected, turn) && selected.side === 'left')} onClick={selectGroup(turn, index, 'left')}>(</button>
             {turn.turns.map((t, i) => {
               return <React.Fragment key={i}>
                 {equalsInsert(selected, i, index) && <button className={classNames(true)} onClick={selectNew(-1)}>
@@ -144,9 +144,12 @@ const EditableAlgorithm = ({algo, selected, onSelect}: EditableAlgorithmProps) =
         </React.Fragment>
       }
 
-      return <button key={index} className={classNames(equalsTurn(selected, turn))} onClick={selectTurn(turn, index)}>
-        {turnToString(turn)}
-      </button>
+      return <React.Fragment key={index}>
+        {insertButton}
+        <button className={classNames(equalsTurn(selected, turn))} onClick={selectTurn(turn, index)}>
+          {turnToString(turn)}
+        </button>
+      </React.Fragment>
     })}
     <button className={classNames(newIsSelected, true)} onClick={selectNew(-1)}>
       {newIsSelected && <span className="caret">|</span>}

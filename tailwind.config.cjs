@@ -49,9 +49,11 @@ module.exports = {
     }
   },
   plugins: [
-    plugin(({addVariant, addComponents}) => {
+    plugin(({addVariant}) => {
       addVariant('can-hover', '@media (any-hover: hover)')
       addVariant('no-hover', '@media (any-hover: none)')
+      addVariant('keyboard-h', '@media (max-height: 620px)')
+      addVariant('keyboard-w', '@media (max-width: 450px)')
     })
   ],
 };
