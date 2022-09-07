@@ -97,19 +97,30 @@ const useAlgo = (initial: Algo.RubicsAlgorithm) => {
 
 const Editor = ({show}: EditorProps) => {
   const ref = useRef<HTMLDivElement>(null)
+  const [render, setRender] = useState(false)
 
   useEffect(() => {
-    const editor = ref.current!
-    if (show) {
-      editor.style.height = 'auto'
-      const {height} = editor.getBoundingClientRect()
-      editor.style.height = '0'
-      editor.getBoundingClientRect()
-      editor.style.height = `${height}px`
+    if (show && !render)
+      return setRender(true)
+    if (!render)
       return
-    }
-    editor.style.height = '0'
+    const editor = ref.current!
+    editor.style.height = '0px'
+    editor.addEventListener('transitionend', () => {
+      setRender(false)
+    }, {once: true})
   }, [show])
+
+  useEffect(() => {
+    if (!render)
+      return
+    const editor = ref.current!
+    editor.style.height = 'auto'
+    const {height} = editor.getBoundingClientRect()
+    editor.style.height = '0px'
+    editor.getBoundingClientRect()
+    editor.style.height = `${height}px`
+  }, [render])
 
   const algo = useAlgo({turns: []})
   const [selected, setSelected] = useState<Selected>({type: 'new', index: -1})
@@ -457,13 +468,14 @@ const Editor = ({show}: EditorProps) => {
   const disableInsertRight = getDisableInsertRight()
 
   return <>
-    <div ref={ref} className="transition-[height_300ms] h-0 overflow-hidden">
-      <Algorithm.Editable algo={algo.ref} selected={selected} onSelect={setSelected}/>
-      <div className="p-2"/>
-    </div>
+    {render &&
+      <div ref={ref} className="transition-[height_300ms] h-0 overflow-hidden">
+        <Algorithm.Editable algo={algo.ref} selected={selected} onSelect={setSelected}/>
+        <div className="p-2"/>
+      </div>}
     <Keyboard
       show={show}
-      
+
       side={side}
       double={double}
       prime={prime}

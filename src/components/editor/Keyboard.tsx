@@ -62,13 +62,11 @@ const Keyboard = ({
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const div = ref.current!
-    if (show && !render) {
-      setRender(true)
-      return
-    }
+    if (show && !render)
+      return setRender(true)
     if (!render)
       return
+    const div = ref.current!
     div.style.transform = 'translateY(110%)'
     div.addEventListener('transitionend', () => {
       setRender(false)
@@ -76,11 +74,11 @@ const Keyboard = ({
   }, [show])
 
   useEffect(() => {
-    if (render) {
-      const div = ref.current!
-      div.getBoundingClientRect()
-      div.style.transform = 'translateY(0%)'
-    }
+    if (!render) 
+      return
+    const div = ref.current!
+    div.getBoundingClientRect()
+    div.style.transform = 'translateY(0%)'
   }, [render])
 
   return <>{render &&
