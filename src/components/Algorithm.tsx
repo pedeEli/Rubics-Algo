@@ -158,4 +158,51 @@ const EditableAlgorithm = ({algo, selected, onSelect}: EditableAlgorithmProps) =
 }
 Algorithm.Editable = EditableAlgorithm
 
+
+const SelectableAlgorithm = ({algo, selected, onSelect}: EditableAlgorithmProps) => {
+  const selectTurn = (turn: Algo.Turn, index: number, group?: SelectedTurn['group']) => (event: React.MouseEvent) => {
+    onSelect({
+      type: 'turn',
+      turn,
+      index,
+      group
+    }, event)
+  }
+  const selectGroup = (group: Algo.TurnGroup, index: number, side: SelectedGroup['side']) => (event: React.MouseEvent) => {
+    onSelect({
+      type: 'group',
+      group,
+      index,
+      side
+    }, event)
+  }
+
+  return <span className="flex flex-wrap gap-1">
+    {algo.turns.map((turn, index) => {
+      if ('turns' in turn) {
+        return <React.Fragment key={index}>
+          <span className="flex gap-1">
+            <button className={classNames(equalsGroup(selected, turn) && selected.side === 'left')} onClick={selectGroup(turn, index, 'left')}>(</button>
+            {turn.turns.map((t, i) => {
+              return <React.Fragment key={i}>
+                <button className={classNames(equalsTurn(selected, t, [turn, index]))} onClick={selectTurn(t, i, [turn, index])}>
+                  {turnToString(t)}
+                </button>
+              </React.Fragment>
+            })}
+            <button className={classNames(equalsGroup(selected, turn) && selected.side === 'right')} onClick={selectGroup(turn, index, 'right')}>)</button>
+          </span>
+        </React.Fragment>
+      }
+
+      return <React.Fragment key={index}>
+        <button className={classNames(equalsTurn(selected, turn))} onClick={selectTurn(turn, index)}>
+          {turnToString(turn)}
+        </button>
+      </React.Fragment>
+    })}
+  </span>
+}
+Algorithm.Selectable = SelectableAlgorithm
+
 export default Algorithm

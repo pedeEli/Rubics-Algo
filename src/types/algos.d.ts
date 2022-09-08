@@ -12,17 +12,23 @@ declare namespace Algo {
   type FullHandSide = 'R' | 'r' | 'L' | 'l'
   type SingleFingerSide = 'U' | 'u' | 'D' | 'd' | 'F' | 'f' | 'B' | 'b' | 'x' | 'y' | 'z' | 'M' | 'E' | 'S'
 
-  type Turn = {
+  type Turn = FullHandTurn | SingleFingerTurn | SingleFingerDoubleTurn
+
+  interface FullHandTurn {
     side: FullHandSide,
     prime: boolean,
     double: boolean,
     info?: FullHandTurnInfo
-  } | {
+  }
+
+  interface SingleFingerTurn {
     side: SingleFingerSide,
     prime: boolean,
     double: false,
     info?: SingleTurnInfo
-  } | {
+  }
+
+  interface SingleFingerDoubleTurn {
     side: SingleFingerSide,
     prime: boolean,
     double: true,

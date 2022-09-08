@@ -1,122 +1,48 @@
 import {useRef, useEffect, useState} from 'react'
+import {useAlgo} from '@/utils/algo'
 import Algorithm, {type Selected, type SelectedTurn, type SelectedGroup, isTurn} from '@/components/Algorithm'
 import Keyboard from './Keyboard'
+import Tabs from '@/components/layout/Tabs'
+import Info from './Info'
 
 interface EditorProps {
   show: boolean
 }
 
-
-const useAlgo = (initial: Algo.RubicsAlgorithm) => {
-  const [algo, setAlgo] = useState(initial)
-
-  return {
-    ref: algo,
-    insert: (index: number, turn: Algo.Turn | Algo.TurnGroup) => {
-      setAlgo(a => {
-        a.turns = [...a.turns.slice(0, index), turn, ...a.turns.slice(index)]
-        return a
-      })
-    },
-    append: (turn: Algo.Turn | Algo.TurnGroup) => {
-      const {length} = algo.turns
-      setAlgo(a => {
-        a.turns = [...a.turns, turn]
-        return a
-      })
-      return length
-    },
-    set: (index: number, data: Partial<Algo.Turn>) => {
-      setAlgo(a => {
-        const turn = a.turns[index] as Algo.Turn
-        Object.assign(turn, data)
-        return {...a}      
-      })
-    },
-    length: () => algo.turns.length,
-    last: () => algo.turns[algo.turns.length - 1]!,
-    get: (index: number) => algo.turns[index]!,
-    remove: (index: number) => {
-      const turns = [...algo.turns.slice(0, index), ...algo.turns.slice(index + 1)]
-      setAlgo(a => {
-        a.turns = turns
-        return a
-      })
-      return turns
-    },
-    group: (groupIndex: number) => {
-      const ref = algo.turns[groupIndex] as Algo.TurnGroup
-      return {
-        insert: (index: number, turn: Algo.Turn) => {
-          setAlgo(a => {
-            ref.turns = [...ref.turns.slice(0, index), turn, ...ref.turns.slice(index)]
-            return a
-          })
-          return ref
-        },
-        append: (turn: Algo.Turn) => {
-          const {length} = ref.turns
-          setAlgo(a => {
-            ref.turns.push(turn)
-            return a
-          })
-          return [ref, length] as const
-        },
-        set: (index: number, data: Partial<Algo.Turn>) => {
-          setAlgo(a => {
-            const turn = ref.turns[index]!
-            Object.assign(turn, data)
-            return {...a}
-          })
-        },
-        ref,
-        length: () => ref.turns.length,
-        last: () => ref.turns[ref.turns.length - 1]!,
-        get: (index: number) => ref.turns[index]!,
-        delete: () => {
-          const turns = [...algo.turns.slice(0, groupIndex), ...ref.turns,...algo.turns.slice(groupIndex + 1)]
-          setAlgo(a => {
-            a.turns = turns
-            return a
-          })
-          return turns
-        },
-        remove: (index: number) => {
-          const turns = [...ref.turns.slice(0, index), ...ref.turns.slice(index + 1)]
-          setAlgo(a => {
-            ref.turns = turns
-            return a
-          })
-          return turns
-        }
-      }
-    }
-  }
-}
-
-
 const Editor = ({show}: EditorProps) => {
-  const ref = useRef<HTMLDivElement>(null)
+  const editorRef = useRef<HTMLDivElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
   const [render, setRender] = useState(false)
+
+  const observer = new ResizeObserver(entries => {
+    entries.forEach(entry => {
+      const {height} = entry.contentRect
+      editorRef.current!.style.height = `${height}px`
+    })
+  })
 
   useEffect(() => {
     if (show && !render)
       return setRender(true)
     if (!render)
       return
-    const editor = ref.current!
+    const editor = editorRef.current!
     editor.style.height = '0px'
   }, [show])
 
   useEffect(() => {
     if (!render)
       return
-    const editor = ref.current!
+    const editor = editorRef.current!
     editor.style.height = 'auto'
     const {height} = editor.getBoundingClientRect()
     editor.style.height = '0px'
     editor.getBoundingClientRect()
     editor.style.height = `${height}px`
+
+    const content = contentRef.current!
+    observer.observe(content)
+    return () => observer.unobserve(content)
   }, [render])
 
   const handleTransitionEnd = () => {
@@ -481,15 +407,32 @@ const Editor = ({show}: EditorProps) => {
     return () => window.removeEventListener('click', deselect)
   }, [])
 
+  const [infoSelected, setInfoSelected] = useState<Selected>()
+
   return <>
     {render &&
-      <div ref={ref} onTransitionEnd={handleTransitionEnd} className="transition-[height_300ms] h-0 overflow-hidden">
-        <Algorithm.Editable algo={algo.ref} selected={deselected ? undefined : selected} onSelect={(s, e) => {
-          e.stopPropagation()
-          setSelected(s)
-          setDeselected(false)
-        }}/>
-        <div className="p-2"/>
+      <div ref={editorRef} onTransitionEnd={handleTransitionEnd} className="transition-[height] duration-[300ms] h-0 overflow-hidden">
+        <div ref={contentRef} onTransitionEnd={e => e.stopPropagation()}>
+          <Tabs selected={0}>
+            <Tabs.Header>
+              <Tabs.Tab name="Algorithm" id={0}/>
+              <Tabs.Tab name="Info" id={1}/>
+            </Tabs.Header>
+            <Tabs.Content>
+              <Tabs.Panel id={0}>
+                <Algorithm.Editable algo={algo.ref} selected={deselected ? undefined : selected} onSelect={(s, e) => {
+                  e.stopPropagation()
+                  setSelected(s)
+                  setDeselected(false)
+                }}/>
+              </Tabs.Panel>
+              <Tabs.Panel id={1}>
+                <Info algo={algo} selected={infoSelected} onSelect={setInfoSelected}/>
+              </Tabs.Panel>
+            </Tabs.Content>
+          </Tabs>
+          <div className="p-2"/>
+        </div>
       </div>}
     <Keyboard
       show={!deselected && show}

@@ -48,3 +48,8 @@ body {
         }
     }
 }
+
+
+.button-select.active + .button-select {
+    /* border-left-color: transparent;       */
+}

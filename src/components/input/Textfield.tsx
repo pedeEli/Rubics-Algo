@@ -1,5 +1,4 @@
-import type { FormEvent, ReactNode, HTMLInputTypeAttribute } from "react"
-import {useState} from 'react'
+import {useState, ReactNode, HTMLInputTypeAttribute} from 'react'
 
 interface TextfieldProps {
   name: string,
@@ -9,32 +8,40 @@ interface TextfieldProps {
   errorMsg?: string
 }
 
-const spanClassName = (value: string, focused: boolean) => {
-  let cls = 'absolute leading-[1.15rem] text-left text-ellipsis whitespace-nowrap cursor-text overflow-hidden transition-all origin-top-left left-0 top-[50%] translate-y-[-50%] pointer-events-none'
-  if (focused || value !== '')
-    cls += ' text-primary translate-y-[-106%] scale-75'
+export const spanClassName = (value: string, focused: boolean) => {
+  let cls = 'absolute top-4 origin-left transition-transform'
+  if (value !== '' || focused)
+    cls += ' translate-y-[-90%] scale-75'
   return cls
 }
 
-const lineClassName = (value: string, focused: boolean) => {
-  let cls = 'after:border-primary after:border-b-[1px] after:transition-all after:scale-x-0 after:absolute after:border-solid after:left-0 after:bottom-0 after:w-full after:z-[2] origin-[46px_center_0px] before:border-b-white/40 before:border-b-[1px] before:z-[1] before:absolute before:bottom-0 before:left-0 before:w-full before:border-solid'
-  if (focused || value !== '')
-    cls += ' after:scale-x-100'
+export const lineClassName = (value: string, focused: boolean) => {
+  let cls = 'absolute bottom-0 left-0 right-0 bg-black/40 dark:bg-white/40 h-[1px] before:absolute before:inset-0 before:bg-primary before:scale-x-0 before:transition-transform'
+  if (value !== '' || focused)
+    cls += ' before:scale-x-100'
   return cls
 }
 
-const Textfield = ({label, name, id = name, type = 'text', errorMsg}: TextfieldProps) => {
+export const Textfield = ({label, name, id = name, type = 'text', errorMsg}: TextfieldProps) => {
   let [value, setValue] = useState('')
   let [focused, setFocused] = useState(false)
 
-  const handleInput = (event: FormEvent<HTMLInputElement>) => {
+  const handleInput = (event: React.FormEvent<HTMLInputElement>) => {
     setValue(event.currentTarget.value)
   }
 
   return <div>
-    <label className="inline-flex items-baseline relative overflow-hidden h-14 text-base before:inline-block before:w-0 before:h-10" htmlFor={id}>
+    <label className="relative inline-flex" htmlFor={id}>
       <span className={spanClassName(value, focused)}>{label}</span>
-      <input onFocus={() => setFocused(true)} onBlur={() => setFocused(false)} onInput={handleInput} className="outline-none h-7 transition-all w-full min-w-0 border-none rounded-none bg-transparent appearance-none p-0" type={type} id={id} name={name}/>
+      <input
+        className="bg-inherit outline-none mt-4 mb-3"
+        onInput={handleInput}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        type={type}
+        name={name}
+        id={id}
+      />
       <div className={lineClassName(value, focused)}/>
     </label>
     {errorMsg !== undefined && <div className="text-sm text-error">{errorMsg === '' ? <span>&nbsp;</span> : errorMsg}</div>}
