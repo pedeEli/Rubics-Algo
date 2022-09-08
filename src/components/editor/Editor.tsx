@@ -4,6 +4,7 @@ import Algorithm, {type Selected, type SelectedTurn, type SelectedGroup, isTurn}
 import Keyboard from './Keyboard'
 import Tabs from '@/components/layout/Tabs'
 import Info from './Info'
+import Button from '@/components/button/Button'
 
 interface EditorProps {
   show: boolean
@@ -64,6 +65,7 @@ const Editor = ({show}: EditorProps) => {
     if (type === 'group')
       return
     if (type === 'turn') {
+      delete selected.turn.info
       if (selected.group) {
         algo.group(selected.group[1]).set(index, {side: letter})
         return
@@ -117,6 +119,8 @@ const Editor = ({show}: EditorProps) => {
     if (type !== 'turn')
       return
     const {turn} = selected
+    if (key === 'double')
+      delete selected.turn.info
     if (selected.group)
       return algo.group(selected.group[1]).set(index, {[key]: !turn[key]})
     return algo.set(index, {[key]: !turn[key]})
@@ -417,6 +421,7 @@ const Editor = ({show}: EditorProps) => {
             <Tabs.Header>
               <Tabs.Tab name="Algorithm" id={0}/>
               <Tabs.Tab name="Info" id={1}/>
+              <Tabs.Tab name="Finish" id={2}/>
             </Tabs.Header>
             <Tabs.Content>
               <Tabs.Panel id={0}>
@@ -428,6 +433,11 @@ const Editor = ({show}: EditorProps) => {
               </Tabs.Panel>
               <Tabs.Panel id={1}>
                 <Info algo={algo} selected={infoSelected} onSelect={setInfoSelected}/>
+              </Tabs.Panel>
+              <Tabs.Panel id={2}>
+                <div className="h-36 grid place-items-center">
+                  <Button variant="raised" onClick={() => console.log(algo.ref)}>Save</Button>
+                </div>
               </Tabs.Panel>
             </Tabs.Content>
           </Tabs>

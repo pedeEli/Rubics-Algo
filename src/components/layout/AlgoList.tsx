@@ -25,7 +25,7 @@ const AlgoList = <Props extends AlgoListProps<'oll'> | AlgoListProps<'pll'>>(pro
 
   return <>
     <Back href={`/${props.type}`}/>
-    <main className="max-w-3xl mx-auto bg-surface dark:bg-surface-dark p-7 h-full" style={{paddingTop: 'var(--back-button-height)'}}>
+    <main className="max-w-3xl mx-auto bg-surface dark:bg-surface-dark p-7 min-h-full" style={{paddingTop: 'var(--back-button-height)'}}>
       <div className="py-2"/>
       <div className="grid grid-cols-[1fr_1fr] items-center">
         <h1 className="text-4xl text-center font-bold col-start-1 col-end-3 row-start-1">

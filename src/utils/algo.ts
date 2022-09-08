@@ -28,7 +28,7 @@ export const useAlgo = (initial: Algo.RubicsAlgorithm) => {
       })
       return length
     },
-    set: (index: number, data: Partial<Algo.Turn>) => {
+    set: (index: number, data: Partial<Omit<Algo.Turn, 'info'>>) => {
       setAlgo(a => {
         const turn = a.turns[index] as Algo.Turn
         Object.assign(turn, data)
@@ -64,7 +64,7 @@ export const useAlgo = (initial: Algo.RubicsAlgorithm) => {
           })
           return [ref, length] as const
         },
-        set: (index: number, data: Partial<Algo.Turn>) => {
+        set: (index: number, data: Partial<Omit<Algo.Turn, 'info'>>) => {
           setAlgo(a => {
             const turn = ref.turns[index]!
             Object.assign(turn, data)
@@ -90,14 +90,6 @@ export const useAlgo = (initial: Algo.RubicsAlgorithm) => {
             return a
           })
           return turns
-        },
-        setInfo: (info: string) => {
-          setAlgo(a => {
-            ref.info = info
-            if (info === '')
-              delete ref.info
-            return a
-          })
         }
       }
     }

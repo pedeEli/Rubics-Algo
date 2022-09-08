@@ -35,6 +35,7 @@ const thumbOptions: Array<{label: string, value: Algo.ThumbPosition | ''}> = [
 ]
 
 const Info = ({algo, selected, onSelect}: InfoProps) => {
+  const [algoInfo, setAlgoInfo] = useState(algo.ref.info ?? '')
   const [finger, setFinger] = useState<Algo.Finger | ''>('')
   const [hand, setHand] = useState<Algo.Hand>('Left Hand')
   const [thumb, setThumb] = useState<Algo.ThumbPosition | ''>('')
@@ -86,14 +87,17 @@ const Info = ({algo, selected, onSelect}: InfoProps) => {
   const handleFingerSelect = (finger: Algo.Finger | '') => {
     setFinger(finger)
 
-    if (selected?.type !== 'turn' || finger === '')
+    if (selected?.type !== 'turn')
       return
+
+    if (finger === '')
+      return delete selected.turn.info
    
     if (isSingleFingerDoubleTurn(selected.turn)) {
-      algo.set(selected.index, {info: {first: {finger, hand}, second: {finger: secondFinger, hand: secondHand}}})
+      selected.turn.info = {first: {finger, hand}, second: {finger: secondFinger, hand: secondHand}}
       return
     }
-    algo.set(selected.index, {info: {finger, hand}})
+    selected.turn.info = {finger, hand}
   }
   const handleHandSelect = (hand: Algo.Hand) => {
     setHand(hand)
@@ -102,18 +106,21 @@ const Info = ({algo, selected, onSelect}: InfoProps) => {
       return
 
     if (isSingleFingerDoubleTurn(selected.turn)) {
-      algo.set(selected.index, {info: {first: {finger, hand}, second: {finger: secondFinger, hand: secondHand}}})
+      selected.turn.info = {first: {finger, hand}, second: {finger: secondFinger, hand: secondHand}}
       return
     }
-    algo.set(selected.index, {info: {finger, hand}})
+    selected.turn.info = {finger, hand}
   }
   const handleThumbSelect = (thumb: Algo.ThumbPosition | '') => {
     setThumb(thumb)
 
-    if (selected?.type !== 'turn' || thumb === '')
+    if (selected?.type !== 'turn')
       return
     
-    algo.set(selected.index, {info: {thumbPosition: thumb}})
+    if (thumb === '')
+      return delete selected.turn.info
+    
+    selected.turn.info = {thumbPosition: thumb}
   }
 
   const handleSecondFingerSelect = (secondFinger: Algo.Finger) => {
@@ -122,7 +129,7 @@ const Info = ({algo, selected, onSelect}: InfoProps) => {
     if (selected?.type !== 'turn' || finger === '')
       return
 
-    algo.set(selected.index, {info: {first: {finger, hand}, second: {finger: secondFinger, hand: secondHand}}})
+    selected.turn.info = {first: {finger, hand}, second: {finger: secondFinger, hand: secondHand}}
   }
   const handleSecondHandSelect = (secondHand: Algo.Hand) => {
     setSecondHand(secondHand)
@@ -130,7 +137,7 @@ const Info = ({algo, selected, onSelect}: InfoProps) => {
     if (selected?.type !== 'turn' || finger === '')
       return
 
-    algo.set(selected.index, {info: {first: {finger, hand}, second: {finger: secondFinger, hand: secondHand}}})
+    selected.turn.info = {first: {finger, hand}, second: {finger: secondFinger, hand: secondHand}}
   }
 
   const handleGroupInfo = (groupInfo: string) => {
@@ -138,12 +145,24 @@ const Info = ({algo, selected, onSelect}: InfoProps) => {
 
     if (selected?.type !== 'group')
       return
-    
-    algo.group(selected.index).setInfo(groupInfo)
+   
+    if (groupInfo === '')
+      return delete selected.group.info
+
+    selected.group.info = groupInfo
+  }
+
+  const handleAlgoInfo = (algoInfo: string) => {
+    setAlgoInfo(algoInfo)
+
+    if (algoInfo === '')
+      return delete algo.ref.info
+
+    algo.ref.info = algoInfo
   }
 
   return <div className="flex flex-col">
-    <Textarea label="Info" name="info"/>
+    <Textarea label="Info" name="info" value={algoInfo} onInput={handleAlgoInfo}/>
     <div className="py-2"/>
     <Algorithm.Selectable algo={algo.ref} onSelect={onSelect} selected={selected}/>
     {selected?.type === 'turn' && isSingleFingerTurn(selected.turn) && <>
