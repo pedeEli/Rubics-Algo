@@ -15,6 +15,7 @@ interface EditorProps<Type extends 'oll' | 'pll'> {
   section: Type extends 'oll' ? Cube.OLLSection : Cube.PLLSection,
   onSave: (algoId: Algo.RubicsAlgoId) => void,
   onEdit: (algoId: Algo.RubicsAlgoId) => void,
+  onClose: () => void,
   editing?: Algo.RubicsAlgoId
 }
 
@@ -58,6 +59,7 @@ const Editor = <Props extends EditorProps<'oll'> | EditorProps<'pll'>>(props: Pr
     if (props.show)
       return
     setRender(false)
+    props.onClose()
   }
 
   useEffect(() => {

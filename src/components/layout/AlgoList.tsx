@@ -33,8 +33,6 @@ const AlgoList = <Props extends AlgoListProps<'oll'> | AlgoListProps<'pll'>>(pro
 
   const toggleEditor = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation()
-    if (showEditor)
-      setEditing(undefined)
     setShowEditor(!showEditor)
   }
 
@@ -45,6 +43,11 @@ const AlgoList = <Props extends AlgoListProps<'oll'> | AlgoListProps<'pll'>>(pro
   const handleEdit = (algoId: Algo.RubicsAlgoId) => {
     setAlgos(as => as.map(([id, algo]) => [id, id === algoId[0] ? algoId[1] : algo]))
     setShowEditor(false)
+    setEditing(undefined)
+  }
+  const handleClose = () => {
+    if (!editing)
+      return
     setEditing(undefined)
   }
 
@@ -73,8 +76,8 @@ const AlgoList = <Props extends AlgoListProps<'oll'> | AlgoListProps<'pll'>>(pro
       <div className="py-2"/>
       {session.status === 'authenticated' && (
         props.type === 'oll'
-          ? <Editor show={showEditor} type="oll" section={props.section} name={props.name} onSave={handleSave} editing={editing} onEdit={handleEdit}/>
-          : <Editor show={showEditor} type="pll" section={props.section} name={props.name} onSave={handleSave} editing={editing} onEdit={handleEdit}/>
+          ? <Editor show={showEditor} type="oll" section={props.section} name={props.name} onSave={handleSave} editing={editing} onEdit={handleEdit} onClose={handleClose}/>
+          : <Editor show={showEditor} type="pll" section={props.section} name={props.name} onSave={handleSave} editing={editing} onEdit={handleEdit} onClose={handleClose}/>
       )}
       <div className="grid sm:grid-cols-[auto_1fr] gap-4">
         <div className="aspect-square w-[10rem] justify-self-center cube-bg">
@@ -84,8 +87,9 @@ const AlgoList = <Props extends AlgoListProps<'oll'> | AlgoListProps<'pll'>>(pro
         </div>
         <div className="flex flex-col gap-2">
           {algos.map((algoId) => {
-            return <AlgorithmDetail key={algoId[0]} algoId={algoId} disableDelete={disableDelete} onDelete={handleDelete} onEdit={handleEditToggle}/>
+            return <AlgorithmDetail key={algoId[0]} algoId={algoId} disableDelete={disableDelete} onDelete={handleDelete} onEdit={handleEditToggle} showButtons={session.status === 'authenticated'}/>
           })}
+          <div className="h-[2px] bg-secondary dark:bg-secondary-dark w-full"/>
         </div>
       </div>
     </main>
@@ -101,9 +105,10 @@ interface AlgorithmDetailProps {
   algoId: Algo.RubicsAlgoId,
   onDelete: (algoId: Algo.RubicsAlgoId) => void,
   onEdit: (algoId: Algo.RubicsAlgoId) => void,
-  disableDelete: boolean
+  disableDelete: boolean,
+  showButtons: boolean
 }
-const AlgorithmDetail = ({algoId, onDelete, onEdit, disableDelete}: AlgorithmDetailProps) => {
+const AlgorithmDetail = ({algoId, onDelete, onEdit, disableDelete, showButtons}: AlgorithmDetailProps) => {
   const [open, setOpen] = useState(false)
   const [render, setRender] = useState(false)
   const detailRef = useRef<HTMLDivElement>(null)
@@ -150,6 +155,11 @@ const AlgorithmDetail = ({algoId, onDelete, onEdit, disableDelete}: AlgorithmDet
     setRender(false)
   }
 
+  const handleEdit = () => {
+    onEdit(algoId)
+    setOpen(false)
+  }
+
   const [selected, setSelected] = useState<Selected>()
 
   return <div>
@@ -163,15 +173,16 @@ const AlgorithmDetail = ({algoId, onDelete, onEdit, disableDelete}: AlgorithmDet
             <div className="p-1"/>
           </>}
           <Algorithm.Selectable algo={algo} selected={selected} onSelect={setSelected}/>
+          <div className="p-1"/>
+          {showButtons &&
+            <div className="flex gap-2">
+              <Button onClick={handleEdit}>Edit</Button>
+              <Button onClick={() => onDelete(algoId)} disabled={disableDelete}>Delete</Button>
+            </div>}
           <FullHandTurnInfo selected={selected}/>
           <SingleFingerTurnInfo selected={selected}/>
           <SingleFingerDoubleTurnInfo selected={selected}/>
           <GroupInfo selected={selected}/>
-          <div className="p-1"/>
-          <div className="flex gap-2">
-            <Button onClick={() => onEdit(algoId)}>Edit</Button>
-            <Button onClick={() => onDelete(algoId)} disabled={disableDelete}>Delete</Button>
-          </div>
         </div>
       </div>
     </div>}
