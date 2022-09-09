@@ -470,7 +470,7 @@ const Editor = <Props extends EditorProps<'oll'> | EditorProps<'pll'>>(props: Pr
               </Tabs.Panel>
               <Tabs.Panel id={2}>
                 <div className="h-36 grid place-items-center">
-                  <Button variant="raised" onClick={handleSave}>Save</Button>
+                  <Button variant="raised" disabled={algo.length() === 0} onClick={handleSave}>Save</Button>
                 </div>
               </Tabs.Panel>
             </Tabs.Content>
