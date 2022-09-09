@@ -5,7 +5,8 @@ interface TabsContext {
   tabs: Map<React.Key, () => HTMLButtonElement>,
   selected?: React.Key,
   setSelected: (id: React.Key) => void,
-  indices: Map<React.Key, number>
+  indices: Map<React.Key, number>,
+  transitioning: boolean
 }
 const TabsContext = createContext<TabsContext | undefined>(undefined)
 
@@ -25,7 +26,16 @@ const Tabs = ({selected: selected_, children}: TabsProps) => {
     indices.current.set(id, index.current++)
   }
 
-  return <TabsContext.Provider value={{register, selected, tabs: tabs.current, setSelected, indices: indices.current}}>
+  const value: TabsContext = {
+    register,
+    selected,
+    tabs: tabs.current,
+    setSelected,
+    indices: indices.current,
+    transitioning: false
+  }
+
+  return <TabsContext.Provider value={value}>
     <div className="w-full">
       {children}
     </div>
@@ -74,7 +84,7 @@ const TabsTab = ({name, id}: TabProps) => {
   context.register(id)
   context.tabs.set(id, () => ref.current!)
 
-  return <button ref={ref} className="w-full tracking-wider px-3 py-2 uppercase hover-highlight relative" onClick={() => context.setSelected(id)}>{name}</button>
+  return <button ref={ref} className="w-full tracking-wider px-3 py-2 uppercase hover-highlight relative" onClick={() => context.transitioning || context.setSelected(id)}>{name}</button>
 }
 Tabs.Tab = TabsTab
 
@@ -125,6 +135,8 @@ const TabsPanel = ({id, children}: PanelProps) => {
     if (!render)
       return
 
+    context.transitioning = true
+
     const panel = ref.current!
 
     panel.getBoundingClientRect()
@@ -132,11 +144,11 @@ const TabsPanel = ({id, children}: PanelProps) => {
   }, [render])
 
   const handleTransitionEnd = () => {
-    if (context.selected === id)
+    if (previous.current === id)
       return
+    context.transitioning = false
     setRender(false)
   }
-
   const directionClass = (isBefore?: boolean) => {
     if (isBefore === undefined)
       return 'translate-x-0'

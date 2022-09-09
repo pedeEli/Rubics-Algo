@@ -23,6 +23,7 @@ const Editor = <Props extends EditorProps<'oll'> | EditorProps<'pll'>>(props: Pr
   const editorRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
   const [render, setRender] = useState(false)
+  const [open, setOpen] = useState(false)
 
   const observer = new ResizeObserver(entries => {
     entries.forEach(entry => {
@@ -32,13 +33,22 @@ const Editor = <Props extends EditorProps<'oll'> | EditorProps<'pll'>>(props: Pr
   })
 
   useEffect(() => {
-    if (props.show && !render)
+    if (!open && render) {
+      setRender(false)
+      setOpen(true)
+      return
+    }
+    setOpen(props.show)
+  }, [props.show])
+
+  useEffect(() => {
+    if (open && !render)
       return setRender(true)
     if (!render)
       return
     const editor = editorRef.current!
     editor.style.height = '0px'
-  }, [props.show])
+  }, [open])
 
   useEffect(() => {
     if (!render)
@@ -56,7 +66,7 @@ const Editor = <Props extends EditorProps<'oll'> | EditorProps<'pll'>>(props: Pr
   }, [render])
 
   const handleTransitionEnd = () => {
-    if (props.show)
+    if (open)
       return
     setRender(false)
     props.onClose()
@@ -504,7 +514,7 @@ const Editor = <Props extends EditorProps<'oll'> | EditorProps<'pll'>>(props: Pr
         </div>
       </div>}
     <Keyboard
-      show={!deselected && props.show}
+      show={!deselected && open}
 
       side={side}
       double={double}
