@@ -9,25 +9,56 @@ import AddSVG from '@/components/svg/Add'
 import Editor from '@/components/editor'
 
 import {useSession} from 'next-auth/react'
-import {useState, useRef, useEffect} from 'react'
+import React, {useState, useRef, useEffect} from 'react'
+import {trpc} from '@/utils/trpc'
 
 interface AlgoListProps<Type extends 'oll' | 'pll'> {
   type: Type,
   name: Type extends 'oll' ? Cube.OLLName : Cube.PLLName,
   section: Type extends 'oll' ? Cube.OLLSection : Cube.PLLSection,
-  defaultAlgos: Algo.RubicsAlgorithm[],
-  userAlgos: Algo.RubicsAlgorithm[] | null
+  defaultAlgoIds: Algo.RubicsAlgoId[],
+  userAlgoIds: Algo.RubicsAlgoId[] | null
 }
 
 const AlgoList = <Props extends AlgoListProps<'oll'> | AlgoListProps<'pll'>>(props: Props) => {
   const session = useSession()
   const [showEditor, setShowEditor] = useState(false)
-  const [algos, setAlgos] = useState<Algo.RubicsAlgorithm[]>(props.userAlgos ?? props.defaultAlgos)
+  const [algos, setAlgos] = useState<Algo.RubicsAlgoId[]>(props.userAlgoIds ?? props.defaultAlgoIds)
+  const [editing, setEditing] = useState<Algo.RubicsAlgoId>()
+  const deleteMutation = trpc.useMutation('algorithms.delete', {
+    onSuccess: (_, {id}) => {
+      setAlgos(as => as.filter(([id_]) => id_ !== id))
+    }
+  })
 
-  const handleSave = (algo: Algo.RubicsAlgorithm) => {
-    setAlgos(as => [...as, algo])
+  const toggleEditor = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation()
+    if (showEditor)
+      setEditing(undefined)
+    setShowEditor(!showEditor)
+  }
+
+  const handleSave = (algoId: Algo.RubicsAlgoId) => {
+    setAlgos(as => [...as, algoId])
     setShowEditor(false)
   }
+  const handleEdit = (algoId: Algo.RubicsAlgoId) => {
+    setAlgos(as => as.map(([id, algo]) => [id, id === algoId[0] ? algoId[1] : algo]))
+    setShowEditor(false)
+    setEditing(undefined)
+  }
+
+  const handleDelete = (algoId: Algo.RubicsAlgoId) => {
+    if (deleteMutation.isLoading)
+      return
+    deleteMutation.mutate({id: algoId[0]})
+  }
+  const handleEditToggle = (algoId: Algo.RubicsAlgoId) => {
+    setEditing(algoId)
+    setShowEditor(true)
+  }
+
+  const disableDelete = algos.length === 1
 
   return <>
     <Back href={`/${props.type}`}/>
@@ -37,26 +68,23 @@ const AlgoList = <Props extends AlgoListProps<'oll'> | AlgoListProps<'pll'>>(pro
         <h1 className="text-4xl text-center font-bold col-start-1 col-end-3 row-start-1">
           {props.type === 'pll' ? `${props.name} Permutation` : props.name}
         </h1>
-        {session.status === 'authenticated' && <IconButton onClick={e => {
-          e.stopPropagation()
-          setShowEditor(!showEditor)
-        }} className="col-start-2 row-start-1 justify-self-end"><AddSVG/></IconButton>}
+        {session.status === 'authenticated' && <IconButton onClick={toggleEditor} className="col-start-2 row-start-1 justify-self-end"><AddSVG/></IconButton>}
       </div>
       <div className="py-2"/>
       {session.status === 'authenticated' && (
         props.type === 'oll'
-          ? <Editor show={showEditor} type="oll" section={props.section} name={props.name} onSave={handleSave}/>
-          : <Editor show={showEditor} type="pll" section={props.section} name={props.name} onSave={handleSave}/>
+          ? <Editor show={showEditor} type="oll" section={props.section} name={props.name} onSave={handleSave} editing={editing} onEdit={handleEdit}/>
+          : <Editor show={showEditor} type="pll" section={props.section} name={props.name} onSave={handleSave} editing={editing} onEdit={handleEdit}/>
       )}
-      <div className="grid grid-cols-[10rem_auto] gap-4">
-        <div className="aspect-square cube-bg">
+      <div className="grid sm:grid-cols-[auto_1fr] gap-4">
+        <div className="aspect-square w-[10rem] justify-self-center cube-bg">
           {props.type === 'oll'
           ? <CubeButton.OLLCube {...ollCubes[props.section][props.name]}/>
           : <CubeButton.PLLCube {...pllCubes[props.section][props.name]}/>}
         </div>
         <div className="flex flex-col gap-2">
-          {algos.map((algo, index) => {
-            return <AlgorithmDetail key={index} algo={algo}/>
+          {algos.map((algoId) => {
+            return <AlgorithmDetail key={algoId[0]} algoId={algoId} disableDelete={disableDelete} onDelete={handleDelete} onEdit={handleEditToggle}/>
           })}
         </div>
       </div>
@@ -70,15 +98,20 @@ export default AlgoList
 import {isSingleFingerTurn, isFullHandTurn, isSingleFingerDoubleTurn} from '@/utils/algo'
 
 interface AlgorithmDetailProps {
-  algo: Algo.RubicsAlgorithm
+  algoId: Algo.RubicsAlgoId,
+  onDelete: (algoId: Algo.RubicsAlgoId) => void,
+  onEdit: (algoId: Algo.RubicsAlgoId) => void,
+  disableDelete: boolean
 }
-const AlgorithmDetail = ({algo}: AlgorithmDetailProps) => {
+const AlgorithmDetail = ({algoId, onDelete, onEdit, disableDelete}: AlgorithmDetailProps) => {
   const [open, setOpen] = useState(false)
   const [render, setRender] = useState(false)
   const detailRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
 
-  const observer = new ResizeObserver(entries => {
+  const [_, algo] = algoId
+
+  let observer = typeof window !== 'undefined' && new ResizeObserver(entries => {
     entries.forEach(entry => {
       const {height} = entry.contentRect
       detailRef.current!.style.height = `${height}px`
@@ -95,7 +128,7 @@ const AlgorithmDetail = ({algo}: AlgorithmDetailProps) => {
   }, [open])
 
   useEffect(() => {
-    if (!render)
+    if (!render || !observer)
       return
     const detail = detailRef.current!
     detail.style.height = 'auto'
@@ -106,7 +139,9 @@ const AlgorithmDetail = ({algo}: AlgorithmDetailProps) => {
 
     const content = contentRef.current!
     observer.observe(content)
-    return () => observer.unobserve(content)
+    return () => {
+      observer && observer.unobserve(content)
+    }
   }, [render])
 
   const handleTransitionEnd = () => {
@@ -132,6 +167,11 @@ const AlgorithmDetail = ({algo}: AlgorithmDetailProps) => {
           <SingleFingerTurnInfo selected={selected}/>
           <SingleFingerDoubleTurnInfo selected={selected}/>
           <GroupInfo selected={selected}/>
+          <div className="p-1"/>
+          <div className="flex gap-2">
+            <Button onClick={() => onEdit(algoId)}>Edit</Button>
+            <Button onClick={() => onDelete(algoId)} disabled={disableDelete}>Delete</Button>
+          </div>
         </div>
       </div>
     </div>}

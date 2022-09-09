@@ -33,8 +33,8 @@ export const getCubeServerSideProps = <
 ): GetServerSideProps<{
   name: Name,
   section: Section,
-  defaultAlgos: Algo.RubicsAlgorithm[],
-  userAlgos: Algo.RubicsAlgorithm[] | null
+  defaultAlgoIds: Algo.RubicsAlgoId[],
+  userAlgoIds: Algo.RubicsAlgoId[] | null
 }, {name: string, section: string}> => async ({params, req, res}) => {
   if (!params)
     return { notFound: true }
@@ -45,11 +45,12 @@ export const getCubeServerSideProps = <
 
   const defaultAlgosStr = await fs.promises.readFile(`./algos/${type}/${name}.algos.json`, 'utf-8')
   const defaultAlgos = JSON.parse(defaultAlgosStr) as Algo.RubicsAlgorithm[]
+  const defaultAlgoIds = defaultAlgos.map<Algo.RubicsAlgoId>((algo, index) => [`default-${index}`, algo])
 
-  const userAlgos = await getUserAlgos(type, section, name, req, res, defaultAlgos)
+  const userAlgoIds = await getUserAlgos(type, section, name, req, res, defaultAlgoIds)
 
   return {
-    props: { section, name, defaultAlgos, userAlgos: userAlgos ?? null }
+    props: { section, name, defaultAlgoIds, userAlgoIds: userAlgoIds ?? null }
   }
 }
 
@@ -64,7 +65,7 @@ const getUserAlgos = async (
   name: string,
   req: GetServerSidePropsContext['req'],
   res: GetServerSidePropsContext['res'],
-  defaultAlgos: Algo.RubicsAlgorithm[]
+  defaultAlgoIds: Algo.RubicsAlgoId[]
 ) => {
   const session = await unstable_getServerSession(req, res, authOptions)
   if (!session?.user)
@@ -80,11 +81,11 @@ const getUserAlgos = async (
   })
 
   if (algos.length)
-    return algos.map<Algo.RubicsAlgorithm>(algo => algo.algorithm as any)
+    return algos.map<Algo.RubicsAlgoId>(algo => [algo.id, algo.algorithm as any])
 
   await prisma.algorithm.createMany({
-    data: defaultAlgos.map<Prisma.AlgorithmCreateManyInput>(algo => ({
-      algorithm: algo as any,
+    data: defaultAlgoIds.map<Prisma.AlgorithmCreateManyInput>(algo => ({
+      algorithm: algo[1] as any,
       type,
       section,
       name,
@@ -92,5 +93,5 @@ const getUserAlgos = async (
     }))
   })
 
-  return defaultAlgos
+  return defaultAlgoIds
 }

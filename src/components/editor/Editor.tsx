@@ -6,13 +6,16 @@ import Tabs from '@/components/layout/Tabs'
 import Info from './Info'
 import Button from '@/components/button/Button'
 import {trpc} from '@/utils/trpc'
+import {deepClone} from '@/utils/algo'
 
 interface EditorProps<Type extends 'oll' | 'pll'> {
   show: boolean,
   type: Type,
   name: Type extends 'oll' ? Cube.OLLName : Cube.PLLName,
   section: Type extends 'oll' ? Cube.OLLSection : Cube.PLLSection,
-  onSave: (algo: Algo.RubicsAlgorithm) => void
+  onSave: (algoId: Algo.RubicsAlgoId) => void,
+  onEdit: (algoId: Algo.RubicsAlgoId) => void,
+  editing?: Algo.RubicsAlgoId
 }
 
 const Editor = <Props extends EditorProps<'oll'> | EditorProps<'pll'>>(props: Props) => {
@@ -56,6 +59,12 @@ const Editor = <Props extends EditorProps<'oll'> | EditorProps<'pll'>>(props: Pr
       return
     setRender(false)
   }
+
+  useEffect(() => {
+    if (!props.editing)
+      return algo.reset()
+    algo.reset(deepClone(props.editing[1]))
+  }, [props.editing])
 
   const algo = useAlgo({turns: []})
   const [selected, setSelected] = useState<Selected>({type: 'new', index: -1})
@@ -410,24 +419,30 @@ const Editor = <Props extends EditorProps<'oll'> | EditorProps<'pll'>>(props: Pr
     setDeselected(true)
   }
   useEffect(() => {
-    if (!window)
-      return
     window.addEventListener('click', deselect)
     return () => window.removeEventListener('click', deselect)
   }, [])
 
   const [infoSelected, setInfoSelected] = useState<Selected>()
 
-  const mutation = trpc.useMutation('algorithms.add')
-  const handleSave = async () => {
-    try {
-      if (props.type === 'oll')
-        await mutation.mutateAsync({type: 'oll', section: props.section, name: props.name, algo: algo.ref})
-      else
-        await mutation.mutateAsync({type: 'pll', section: props.section, name: props.name, algo: algo.ref})
-      props.onSave(algo.ref)
+  const addMutation = trpc.useMutation('algorithms.add', {
+    onSuccess: (id, input) => {
+      props.onSave([id, input.algo])
       algo.reset()
-    } catch (e) {}
+    }
+  })
+  const updateMutation = trpc.useMutation('algorithms.update', {
+    onSuccess: (_, {id, algo}) => {
+      props.onEdit([id, algo])
+    }
+  })
+  const handleSave = () => {
+    if (props.editing)
+      return updateMutation.mutate({id: props.editing[0], algo: algo.ref})
+
+    if (props.type === 'oll')
+      return addMutation.mutate({type: 'oll', section: props.section, name: props.name, algo: algo.ref})
+    addMutation.mutate({type: 'pll', section: props.section, name: props.name, algo: algo.ref})
   }
 
   return <>

@@ -4,6 +4,8 @@ declare namespace Algo {
     turns: Array<Turn | TurnGroup>
   }
 
+  type RubicsAlgoId = [string, RubicsAlgorithm]
+
   interface TurnGroup {
     info?: string,
     turns: Array<Turn>

@@ -44,8 +44,6 @@ const algo = z.object({
   )
 })
 
-const ee = new EventEmitter()
-
 export const algorithms = createProtectedRouter()
   .mutation('add', {
     input: z.object({
@@ -75,6 +73,32 @@ export const algorithms = createProtectedRouter()
         }
       })
 
-      console.log(algo.algorithm)
+      return algo.id
+    }
+  })
+  .mutation('delete', {
+    input: z.object({
+      id: z.string()
+    }),
+    resolve: async ({input, ctx}) => {
+      await ctx.prisma.algorithm.delete({
+        where: {id: input.id}
+      })
+    }
+  })
+  .mutation('update', {
+    input: z.object({
+      id: z.string(),
+      algo
+    }),
+    resolve: async ({input, ctx}) => {
+      await ctx.prisma.algorithm.update({
+        data: {
+          algorithm: input.algo
+        },
+        where: {
+          id: input.id
+        }
+      })
     }
   })

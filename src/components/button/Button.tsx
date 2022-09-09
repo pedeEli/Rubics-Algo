@@ -11,7 +11,8 @@ export type ButtonProps = {
 } & ({
   onClick?: (event: ReactMouseEvent<HTMLButtonElement>) => void,
   type?: ButtonHTMLAttributes<HTMLButtonElement>['type'],
-  href?: undefined
+  href?: undefined,
+  disabled?: boolean
 } | {
   onClick?: (event: ReactMouseEvent<HTMLAnchorElement>) => void,
   type?: AnchorHTMLAttributes<HTMLAnchorElement>['type'],
@@ -30,12 +31,12 @@ export const textClassName = (color: Color, variant: Variant) => {
 export const bgClassName = (color: Color, variant: Variant) => {
   if (variant === 'normal') {
     if (color === 'primary')
-      return 'before:hover:bg-primary/[.15] before:focus:bg-primary/30 dark:before:hover:bg-primary/10 dark:before:focus:bg-primary/20'
-    return 'before:hover:bg-secondary/20 before:focus:bg-secondary/[.35] dark:before:hover:bg-secondary/10 dark:before:focus:bg-secondary/20'
+      return 'before:hover:bg-primary/[.15] before:focus:bg-primary/30 dark:before:hover:bg-primary/10 dark:before:focus:bg-primary/20 before:disabled:hover:bg-transparent'
+    return 'before:hover:bg-secondary/20 before:focus:bg-secondary/[.35] dark:before:hover:bg-secondary/10 dark:before:focus:bg-secondary/20 before:disabled:hover:bg-transparent'
   }
   if (color === 'primary')
-    return 'bg-primary before:hover:bg-black/5 before:hover:bg-white/10 before:focus:bg-white/20 shadow-md'
-  return 'bg-secondary dark:bg-secondary-dark before:hover:bg-white/10 before:focus:bg-white/20 shadow-md'
+    return 'bg-primary before:hover:bg-black/5 before:hover:bg-white/10 before:focus:bg-white/20 shadow-md dark:disabled:bg-white/40 disabled:bg-black/20 before:disabled:hover:bg-transparent'
+  return 'bg-secondary dark:bg-secondary-dark before:hover:bg-white/10 before:focus:bg-white/20 shadow-md dark:disabled:bg-white/40 disabled:bg-black/20 before:disabled:hover:bg-transparent'
 }
 
 const Button = (props: ButtonProps) => {
@@ -52,7 +53,18 @@ const Button = (props: ButtonProps) => {
   }
 
   return (
-    <button type={props.type} onClick={event => props.onClick && props.onClick(event)} className={`${className} ${textClassName(color, variant)} ${bgClassName(color, variant)} focus:outline-none relative before:absolute before:inset-0 px-4 py-2 rounded-[0.25rem]`}>
+    <button
+      disabled={props.disabled}
+      type={props.type}
+      onClick={event => props.onClick && props.onClick(event)}
+      className={`
+        ${className}
+        ${textClassName(color, variant)}
+        ${bgClassName(color, variant)}
+        focus:outline-none relative before:absolute before:inset-0 px-4 py-2 rounded-[0.25rem]
+        dark:disabled:text-font-dark/40 disabled:text-font/50`
+      }
+    >
       {children}
     </button>
   )

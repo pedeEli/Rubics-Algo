@@ -46,7 +46,9 @@ export const useAlgo = (initial: Algo.RubicsAlgorithm) => {
       })
       return turns
     },
-    reset: () => {
+    reset: (algo?: Algo.RubicsAlgorithm) => {
+      if (algo)
+        return setAlgo(algo)
       setAlgo({turns: []})
     },
     group: (groupIndex: number) => {
@@ -118,4 +120,18 @@ export const isSingleFingerDoubleTurn = (turn: Algo.Turn): turn is Algo.SingleFi
   if (!turn.double)
     return false
   return !fullHandSide.test(turn.side)
+}
+
+
+export const deepClone = <T extends object>(obj: T): T => {
+  const result: Record<string, any> = {}
+  Object.entries(obj).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      return result[key] = value.map(v => typeof v === 'object' ? deepClone(v) : v)
+    }
+    if (typeof value === 'object')
+      return result[key] = deepClone(value)
+    result[key] = value
+  })
+  return result as T
 }
