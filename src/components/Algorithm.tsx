@@ -158,8 +158,10 @@ const EditableAlgorithm = ({algo, selected, onSelect}: EditableAlgorithmProps) =
 }
 Algorithm.Editable = EditableAlgorithm
 
-
-const SelectableAlgorithm = ({algo, selected, onSelect}: EditableAlgorithmProps) => {
+type SelectableAlgorithmProps = Omit<EditableAlgorithmProps, 'onSelect'> & {
+  onSelect: (selected: SelectedTurn | SelectedGroup, event: React.MouseEvent) => void
+}
+const SelectableAlgorithm = ({algo, selected, onSelect}: SelectableAlgorithmProps) => {
   const selectTurn = (turn: Algo.Turn, index: number, group?: SelectedTurn['group']) => (event: React.MouseEvent) => {
     onSelect({
       type: 'turn',

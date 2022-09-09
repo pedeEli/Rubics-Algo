@@ -1,6 +1,6 @@
 import {useRef, useEffect, useState} from 'react'
 import {useAlgo} from '@/utils/algo'
-import Algorithm, {type Selected, type SelectedTurn, type SelectedGroup, isTurn} from '@/components/Algorithm'
+import Algorithm, {Selected, SelectedTurn, SelectedGroup, isTurn} from '@/components/Algorithm'
 import Keyboard from './Keyboard'
 import Tabs from '@/components/layout/Tabs'
 import Info from './Info'
@@ -425,7 +425,32 @@ const Editor = <Props extends EditorProps<'oll'> | EditorProps<'pll'>>(props: Pr
     return () => window.removeEventListener('click', deselect)
   }, [])
 
-  const [infoSelected, setInfoSelected] = useState<Selected>()
+  const [infoSelected, setInfoSelected] = useState<SelectedTurn | SelectedGroup>()
+
+  useEffect(() => {
+    if (!infoSelected)
+      return
+    const {index} = infoSelected
+    if (infoSelected.type === 'group') {
+      const group = algo.group(index).ref
+      if (infoSelected.group === group)
+        return
+      return setInfoSelected(undefined)
+    }
+    if (infoSelected.group) {
+      const group = algo.group(infoSelected.group[1])
+      if (infoSelected.group[0] !== group.ref)
+        return setInfoSelected(undefined)
+      const turn = group.get(index)
+      if (infoSelected.turn === turn)
+        return
+      return setInfoSelected(undefined)
+    }
+    const turn = algo.get(index)
+    if (infoSelected.turn === turn)
+      return
+    setInfoSelected(undefined)
+  }, [algo])
 
   const addMutation = trpc.useMutation('algorithms.add', {
     onSuccess: (id, input) => {

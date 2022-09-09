@@ -1,14 +1,14 @@
 import {useState, useEffect} from 'react'
 import Textarea from '@/components/input/Textarea'
-import Algorithm, {Selected} from '@/components/Algorithm'
+import Algorithm, {SelectedTurn, SelectedGroup} from '@/components/Algorithm'
 import {AlgoHook} from '@/utils/algo'
 
 import {isSingleFingerTurn, isFullHandTurn, isSingleFingerDoubleTurn} from '@/utils/algo'
 
 interface InfoProps {
   algo: AlgoHook,
-  selected: Selected | undefined,
-  onSelect: (selected: Selected) => void
+  selected: SelectedTurn | SelectedGroup | undefined,
+  onSelect: (selected: SelectedTurn | SelectedGroup) => void
 }
 
 const fingerOptions: Array<{label: string, value: Algo.Finger}> = [
