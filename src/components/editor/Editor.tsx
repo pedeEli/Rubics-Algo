@@ -5,12 +5,17 @@ import Keyboard from './Keyboard'
 import Tabs from '@/components/layout/Tabs'
 import Info from './Info'
 import Button from '@/components/button/Button'
+import {trpc} from '@/utils/trpc'
 
-interface EditorProps {
-  show: boolean
+interface EditorProps<Type extends 'oll' | 'pll'> {
+  show: boolean,
+  type: Type,
+  name: Type extends 'oll' ? Cube.OLLName : Cube.PLLName,
+  section: Type extends 'oll' ? Cube.OLLSection : Cube.PLLSection,
+  onSave: (algo: Algo.RubicsAlgorithm) => void
 }
 
-const Editor = ({show}: EditorProps) => {
+const Editor = <Props extends EditorProps<'oll'> | EditorProps<'pll'>>(props: Props) => {
   const editorRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
   const [render, setRender] = useState(false)
@@ -23,13 +28,13 @@ const Editor = ({show}: EditorProps) => {
   })
 
   useEffect(() => {
-    if (show && !render)
+    if (props.show && !render)
       return setRender(true)
     if (!render)
       return
     const editor = editorRef.current!
     editor.style.height = '0px'
-  }, [show])
+  }, [props.show])
 
   useEffect(() => {
     if (!render)
@@ -47,7 +52,7 @@ const Editor = ({show}: EditorProps) => {
   }, [render])
 
   const handleTransitionEnd = () => {
-    if (show)
+    if (props.show)
       return
     setRender(false)
   }
@@ -413,6 +418,18 @@ const Editor = ({show}: EditorProps) => {
 
   const [infoSelected, setInfoSelected] = useState<Selected>()
 
+  const mutation = trpc.useMutation('algorithms.add')
+  const handleSave = async () => {
+    try {
+      if (props.type === 'oll')
+        await mutation.mutateAsync({type: 'oll', section: props.section, name: props.name, algo: algo.ref})
+      else
+        await mutation.mutateAsync({type: 'pll', section: props.section, name: props.name, algo: algo.ref})
+      props.onSave(algo.ref)
+      algo.reset()
+    } catch (e) {}
+  }
+
   return <>
     {render &&
       <div ref={editorRef} onTransitionEnd={handleTransitionEnd} className="transition-[height] duration-[300ms] h-0 overflow-hidden">
@@ -436,7 +453,7 @@ const Editor = ({show}: EditorProps) => {
               </Tabs.Panel>
               <Tabs.Panel id={2}>
                 <div className="h-36 grid place-items-center">
-                  <Button variant="raised" onClick={() => console.log(algo.ref)}>Save</Button>
+                  <Button variant="raised" onClick={handleSave}>Save</Button>
                 </div>
               </Tabs.Panel>
             </Tabs.Content>
@@ -445,7 +462,7 @@ const Editor = ({show}: EditorProps) => {
         </div>
       </div>}
     <Keyboard
-      show={!deselected && show}
+      show={!deselected && props.show}
 
       side={side}
       double={double}

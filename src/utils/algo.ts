@@ -46,6 +46,9 @@ export const useAlgo = (initial: Algo.RubicsAlgorithm) => {
       })
       return turns
     },
+    reset: () => {
+      setAlgo({turns: []})
+    },
     group: (groupIndex: number) => {
       const ref = algo.turns[groupIndex] as Algo.TurnGroup
       return {

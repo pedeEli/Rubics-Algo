@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
-    "pscale": "pscale connect rubics-algo --port 3309"
+    "pscale": "pscale connect rubics-algo main --port 3309",
+    "pscale-shadow": "pscale connect rubics-algo shadow --port 3310"
   },
   "dependencies": {
     "@next-auth/prisma-adapter": "^1.0.4",

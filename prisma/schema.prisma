@@ -13,11 +13,18 @@ datasource db {
     // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
     // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
     url      = env("DATABASE_URL")
+    shadowDatabaseUrl = env("DATABASE_SHADOW_URL")
     referentialIntegrity = "prisma"
 }
 
-model Example {
-    id String @id @default(cuid())
+model Algorithm {
+    id        String @id @default(cuid())
+    userId    String
+    type      String
+    section   String
+    name      String
+    algorithm Json
+    user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // Necessary for Next auth
@@ -55,6 +62,7 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
+    algorithms    Algorithm[]
 }
 
 model VerificationToken {

@@ -1,27 +1,33 @@
 import Back from '@/components/Back'
-import Algorithm from '@/components/Algorithm'
+import Algorithm, {Selected} from '@/components/Algorithm'
 import ollCubes from '@/data/OLLCubes'
 import pllCubes from '@/data/PLLCubes'
 import CubeButton from '@/components/button/CubeButton'
 import Button from '@/components/button/Button'
 import IconButton from '@/components/button/IconButton'
 import AddSVG from '@/components/svg/Add'
-
 import Editor from '@/components/editor'
 
 import {useSession} from 'next-auth/react'
-import {useState} from 'react'
+import {useState, useRef, useEffect} from 'react'
 
 interface AlgoListProps<Type extends 'oll' | 'pll'> {
   type: Type,
-  name: string,
+  name: Type extends 'oll' ? Cube.OLLName : Cube.PLLName,
   section: Type extends 'oll' ? Cube.OLLSection : Cube.PLLSection,
-  defaultAlgos: Algo.RubicsAlgorithm[]
+  defaultAlgos: Algo.RubicsAlgorithm[],
+  userAlgos: Algo.RubicsAlgorithm[] | null
 }
 
 const AlgoList = <Props extends AlgoListProps<'oll'> | AlgoListProps<'pll'>>(props: Props) => {
   const session = useSession()
   const [showEditor, setShowEditor] = useState(false)
+  const [algos, setAlgos] = useState<Algo.RubicsAlgorithm[]>(props.userAlgos ?? props.defaultAlgos)
+
+  const handleSave = (algo: Algo.RubicsAlgorithm) => {
+    setAlgos(as => [...as, algo])
+    setShowEditor(false)
+  }
 
   return <>
     <Back href={`/${props.type}`}/>
@@ -37,16 +43,20 @@ const AlgoList = <Props extends AlgoListProps<'oll'> | AlgoListProps<'pll'>>(pro
         }} className="col-start-2 row-start-1 justify-self-end"><AddSVG/></IconButton>}
       </div>
       <div className="py-2"/>
-      {session.status === 'authenticated' && <Editor show={showEditor}/>}
+      {session.status === 'authenticated' && (
+        props.type === 'oll'
+          ? <Editor show={showEditor} type="oll" section={props.section} name={props.name} onSave={handleSave}/>
+          : <Editor show={showEditor} type="pll" section={props.section} name={props.name} onSave={handleSave}/>
+      )}
       <div className="grid grid-cols-[10rem_auto] gap-4">
         <div className="aspect-square cube-bg">
           {props.type === 'oll'
           ? <CubeButton.OLLCube {...ollCubes[props.section][props.name]}/>
           : <CubeButton.PLLCube {...pllCubes[props.section][props.name]}/>}
         </div>
-        <div className="self-center flex flex-col items-start gap-2">
-          {props.defaultAlgos.map((algo, index) => {
-            return <Button key={index} variant="raised"><Algorithm algo={algo}/></Button>
+        <div className="flex flex-col gap-2">
+          {algos.map((algo, index) => {
+            return <AlgorithmDetail key={index} algo={algo}/>
           })}
         </div>
       </div>
@@ -55,3 +65,113 @@ const AlgoList = <Props extends AlgoListProps<'oll'> | AlgoListProps<'pll'>>(pro
 }
 
 export default AlgoList
+
+
+import {isSingleFingerTurn, isFullHandTurn, isSingleFingerDoubleTurn} from '@/utils/algo'
+
+interface AlgorithmDetailProps {
+  algo: Algo.RubicsAlgorithm
+}
+const AlgorithmDetail = ({algo}: AlgorithmDetailProps) => {
+  const [open, setOpen] = useState(false)
+  const [render, setRender] = useState(false)
+  const detailRef = useRef<HTMLDivElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
+
+  const observer = new ResizeObserver(entries => {
+    entries.forEach(entry => {
+      const {height} = entry.contentRect
+      detailRef.current!.style.height = `${height}px`
+    })
+  })
+
+  useEffect(() => {
+    if (open && !render)
+      return setRender(true)
+    if (!render)
+      return
+    const detail = detailRef.current!
+    detail.style.height = '0px'
+  }, [open])
+
+  useEffect(() => {
+    if (!render)
+      return
+    const detail = detailRef.current!
+    detail.style.height = 'auto'
+    const {height} = detail.getBoundingClientRect()
+    detail.style.height = '0px'
+    detail.getBoundingClientRect()
+    detail.style.height = `${height}px`
+
+    const content = contentRef.current!
+    observer.observe(content)
+    return () => observer.unobserve(content)
+  }, [render])
+
+  const handleTransitionEnd = () => {
+    if (open)
+      return
+    setRender(false)
+  }
+
+  const [selected, setSelected] = useState<Selected>()
+
+  return <div>
+    <Button variant="raised" onClick={() => setOpen(!open)}><Algorithm algo={algo}/></Button>
+    {render && <div ref={detailRef} onTransitionEnd={handleTransitionEnd} className="h-0 transition-[height] overflow-hidden">
+      <div ref={contentRef}>
+        <div className="p-1"/>
+        <div className="ml-3">
+          {algo.info && <>
+            <div>{algo.info}</div>
+            <div className="p-1"/>
+          </>}
+          <Algorithm.Selectable algo={algo} selected={selected} onSelect={setSelected}/>
+          <FullHandTurnInfo selected={selected}/>
+          <SingleFingerTurnInfo selected={selected}/>
+          <SingleFingerDoubleTurnInfo selected={selected}/>
+          <GroupInfo selected={selected}/>
+        </div>
+      </div>
+    </div>}
+  </div>
+}
+
+interface InfoProps {
+  selected?: Selected
+}
+const FullHandTurnInfo = ({selected}: InfoProps) => {
+  if (selected?.type !== 'turn' || !isFullHandTurn(selected.turn) || !selected.turn.info)
+    return <></>
+
+  const {info} = selected.turn
+  return (
+    <div>Your thumb should be on the <span className="text-primary">{info.thumbPosition}</span> when starting the turn.</div>
+  )
+}
+const SingleFingerTurnInfo = ({selected}: InfoProps) => {
+  if (selected?.type !== 'turn' || !isSingleFingerTurn(selected.turn) || !selected.turn.info)
+    return <></>
+  
+  const {info} = selected.turn
+  return (
+    <div>Turn with your <span className="text-primary">{info.finger}</span> on your <span className="text-primary">{info.hand}</span>.</div>
+  )
+}
+const SingleFingerDoubleTurnInfo = ({selected}: InfoProps) => {
+  if (selected?.type !== 'turn' || !isSingleFingerDoubleTurn(selected.turn) ||!selected.turn.info)
+    return <></>
+
+  const {info: {first, second}} = selected.turn
+  return <>
+    <div><span className="text-primary">First</span> turn with your <span className="text-primary">{first.finger}</span> on your <span className="text-primary">{first.hand}</span>.</div>
+    <div><span className="text-primary">Second</span> turn with your <span className="text-primary">{second.finger}</span> on your <span className="text-primary">{second.hand}</span>.</div>
+  </>
+}
+const GroupInfo = ({selected}: InfoProps) => {
+  if (selected?.type !== 'group' || !selected.group.info)
+    return <></>
+
+  return <div>{selected.group.info}</div>
+}

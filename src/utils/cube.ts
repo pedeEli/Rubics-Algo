@@ -1,37 +1,41 @@
-const ollSectionRegex = /^(All Corners Oriented|All Edges Oriented|No Edges Oriented|P Shapes|W Shapes|T Shapes|Square Shapes|Fish Shapes|C Shapes|Small Lightning Bolts|Big Lightning Bolts|L Shapes|Knight Move Shapes|I Shapes|Awkward Shapes)$/
+export const ollSectionRegex = /^All Corners Oriented|All Edges Oriented|No Edges Oriented|P Shapes|W Shapes|T Shapes|Square Shapes|Fish Shapes|C Shapes|Small Lightning Bolts|Big Lightning Bolts|L Shapes|Knight Move Shapes|I Shapes|Awkward Shapes$/
 export const isOLLSection = (section: string): section is Cube.OLLSection => {
   return ollSectionRegex.test(section)
 }
 
-const ollNameRegex = /^OLL (\d+)$/
-export const isOLLName = (name: string): boolean => {
-  const result = ollNameRegex.exec(name)
-  if (!result)
-    return false
-  const n = parseInt(result[1] as string)
-  return n >= 1 && n <= 57
+export const ollNameRegex = /^OLL ([1-9]|[1-4][0-9]|5[1-7])$/
+export const isOLLName = (name: string): name is Cube.OLLName => {
+  return ollNameRegex.test(name)
 }
 
 
-const pllSectionRegex = /^(Edges Only|Corners Only|Adjacent Corner Swap|Diagonal Corner Swap|G Permutations)$/
+export const pllSectionRegex = /^Edges Only|Corners Only|Adjacent Corner Swap|Diagonal Corner Swap|G Permutations$/
 export const isPLLSection = (section: string): section is Cube.PLLSection => {
   return pllSectionRegex.test(section)
 }
 
-const pllNameRegex = /^(Ua|Ub|H|Z|Aa|Ab|E|T|F|Ja|Jb|Ra|Rb|Y|V|Na|Nb|Ga|Gb|Gc|Gd)$/
-export const isPLLName = (name: string): boolean => {
+export const pllNameRegex = /^Ua|Ub|H|Z|Aa|Ab|E|T|F|Ja|Jb|Ra|Rb|Y|V|Na|Nb|Ga|Gb|Gc|Gd$/
+export const isPLLName = (name: string): name is Cube.PLLName => {
   return pllNameRegex.test(name)
 }
 
 
-import type {GetServerSideProps} from 'next'
+import {GetServerSideProps, GetServerSidePropsContext} from 'next'
 import fs from 'fs'
 
-export const getCubeServerSideProps = <Section extends Cube.OLLSection | Cube.PLLSection>(
+export const getCubeServerSideProps = <
+  Section extends Cube.OLLSection | Cube.PLLSection,
+  Name extends Cube.OLLName | Cube.PLLName = Section extends Cube.OLLSection ? Cube.OLLName : Cube.PLLName
+>(
   type: 'oll' | 'pll',
   isSection: (section: string) => section is Section,
-  isName: (name: string) => boolean
-): GetServerSideProps<{name: string, section: Section, algos: Algo.RubicsAlgorithm[]}, {name: string, section: Section}> => async ({params}) => {
+  isName: (name: string) => name is Name
+): GetServerSideProps<{
+  name: Name,
+  section: Section,
+  defaultAlgos: Algo.RubicsAlgorithm[],
+  userAlgos: Algo.RubicsAlgorithm[] | null
+}, {name: string, section: string}> => async ({params, req, res}) => {
   if (!params)
     return { notFound: true }
 
@@ -39,10 +43,54 @@ export const getCubeServerSideProps = <Section extends Cube.OLLSection | Cube.PL
   if (!isSection(section) || !isName(name))
     return { notFound: true }
 
-  const algosStr = await fs.promises.readFile(`./algos/${type}/${name}.algos.json`, 'utf-8')
-  const algos = JSON.parse(algosStr) as Algo.RubicsAlgorithm[]
+  const defaultAlgosStr = await fs.promises.readFile(`./algos/${type}/${name}.algos.json`, 'utf-8')
+  const defaultAlgos = JSON.parse(defaultAlgosStr) as Algo.RubicsAlgorithm[]
+
+  const userAlgos = await getUserAlgos(type, section, name, req, res, defaultAlgos)
 
   return {
-    props: { section, name, algos }
+    props: { section, name, defaultAlgos, userAlgos: userAlgos ?? null }
   }
+}
+
+import {unstable_getServerSession} from 'next-auth/next'
+import {authOptions} from '@/pages/api/auth/[...nextauth]'
+import {prisma} from '@/server/db/client'
+import { Prisma } from '@prisma/client'
+
+const getUserAlgos = async (
+  type: string,
+  section: string,
+  name: string,
+  req: GetServerSidePropsContext['req'],
+  res: GetServerSidePropsContext['res'],
+  defaultAlgos: Algo.RubicsAlgorithm[]
+) => {
+  const session = await unstable_getServerSession(req, res, authOptions)
+  if (!session?.user)
+    return
+  
+  const algos = await prisma.algorithm.findMany({
+    where: {
+      userId: session.user.id,
+      type,
+      section,
+      name
+    }
+  })
+
+  if (algos.length)
+    return algos.map<Algo.RubicsAlgorithm>(algo => algo.algorithm as any)
+
+  await prisma.algorithm.createMany({
+    data: defaultAlgos.map<Prisma.AlgorithmCreateManyInput>(algo => ({
+      algorithm: algo as any,
+      type,
+      section,
+      name,
+      userId: session.user!.id
+    }))
+  })
+
+  return defaultAlgos
 }
