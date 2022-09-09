@@ -1,4 +1,4 @@
-const oll: Record<Cube.OLLSection, Record<string, Cube.OLLCubeProps>> = {
+const oll: Record<Cube.OLLSection, Partial<Record<Cube.OLLName, Cube.OLLCubeProps>>> = {
     "All Corners Oriented": {
         "OLL 20": {
             "top": 1,

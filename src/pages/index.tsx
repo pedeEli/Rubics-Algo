@@ -2,6 +2,8 @@ import type { NextPage } from "next";
 import Head from "next/head";
 
 import CubeButton from '@/components/button/CubeButton'
+import OLLCubes from '@/data/OLLCubes'
+import PLLCubes from '@/data/PLLCubes'
 
 const Home: NextPage = () => {
   return (
@@ -13,10 +15,10 @@ const Home: NextPage = () => {
       </Head>
       <main className="h-full w-full grid place-content-center grid-cols-[10rem_10rem] grid-rows-[10rem] gap-6 mx-auto">
         <CubeButton href="/oll" text="OLL">
-          <CubeButton.OLLCube/>
+          <CubeButton.OLLCube {...OLLCubes['Awkward Shapes']['OLL 29']}/>
         </CubeButton>
         <CubeButton href="/pll" text="PLL">
-          <CubeButton.PLLCube/>
+          <CubeButton.PLLCube {...PLLCubes['Adjacent Corner Swap']['Rb']}/>
         </CubeButton>
       </main>
     </>

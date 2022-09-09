@@ -1,4 +1,4 @@
-const pll: Record<Cube.PLLSection, Record<string, Cube.PLLCubeProps>> = {
+const pll: Record<Cube.PLLSection, Partial<Record<Cube.PLLName, Cube.PLLCubeProps>>> = {
     "Edges Only": {
         "Ua": {
             arrows: [
