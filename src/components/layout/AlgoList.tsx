@@ -247,7 +247,7 @@ const TurnInfo = <
     return <></>
 
   return <div ref={ref} onTransitionEnd={handleTransitionEnd} className="transition-opacity opacity-0">
-    {render(info)}
+    {render(info as any)}
   </div>
 }
 
