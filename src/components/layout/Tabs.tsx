@@ -4,7 +4,7 @@ interface TabsContext {
   register: (id: React.Key) => void,
   tabs: Map<React.Key, () => HTMLButtonElement>,
   selected?: React.Key,
-  setSelected: (id: React.Key) => void,
+  // setSelected: (id: React.Key) => void,
   indices: Map<React.Key, number>,
   transitioning: boolean
 }
@@ -19,6 +19,7 @@ const Tabs = ({selected: selected_, children}: TabsProps) => {
   const tabs = useRef(new Map<React.Key, () => HTMLButtonElement>())
   const index = useRef(0)
   const indices = useRef(new Map<React.Key, number>())
+  const transitioning = useRef(false)
 
   const register = (id: React.Key) => {
     if (indices.current.has(id))
@@ -28,11 +29,20 @@ const Tabs = ({selected: selected_, children}: TabsProps) => {
 
   const value: TabsContext = {
     register,
-    selected,
+    get selected() {
+      return selected
+    },
+    set selected(value) {
+      setSelected(value)
+    },
     tabs: tabs.current,
-    setSelected,
     indices: indices.current,
-    transitioning: false
+    get transitioning() {
+      return transitioning.current
+    },
+    set transitioning(value) {
+      transitioning.current = value
+    }
   }
 
   return <TabsContext.Provider value={value}>
@@ -84,7 +94,14 @@ const TabsTab = ({name, id}: TabProps) => {
   context.register(id)
   context.tabs.set(id, () => ref.current!)
 
-  return <button ref={ref} className="w-full tracking-wider px-3 py-2 uppercase hover-highlight relative" onClick={() => context.transitioning || context.setSelected(id)}>{name}</button>
+  const handleClick = () => {
+    if (context.selected === id || context.transitioning)
+      return
+    context.transitioning = true
+    context.selected = id
+  }
+
+  return <button ref={ref} className="w-full tracking-wider px-3 py-2 uppercase hover-highlight relative" onClick={handleClick}>{name}</button>
 }
 Tabs.Tab = TabsTab
 
@@ -134,8 +151,6 @@ const TabsPanel = ({id, children}: PanelProps) => {
   useEffect(() => {
     if (!render)
       return
-
-    context.transitioning = true
 
     const panel = ref.current!
 
