@@ -22,6 +22,7 @@ export const isPLLName = (name: string): name is Cube.PLLName => {
 
 import {GetServerSideProps, GetServerSidePropsContext} from 'next'
 import fs from 'fs'
+import path from 'path'
 
 export const getCubeServerSideProps = <
   Section extends Cube.OLLSection | Cube.PLLSection,
@@ -44,6 +45,7 @@ export const getCubeServerSideProps = <
     return { notFound: true }
 
   const defaultAlgosStr = await fs.promises.readFile(`./algos/${type}/${name}.algos.json`, 'utf-8')
+  path.resolve('./algos')
   const defaultAlgos = JSON.parse(defaultAlgosStr) as Algo.RubicsAlgorithm[]
   const defaultAlgoIds = defaultAlgos.map<Algo.RubicsAlgoId>((algo, index) => [`default-${index}`, algo])
 
