@@ -1,5 +1,5 @@
 import Back from '@/components/Back'
-import Algorithm, {Selected} from '@/components/Algorithm'
+import Algorithm, {isTurn, isGroup, SelectedGroup, SelectedTurn} from '@/components/Algorithm'
 import ollCubes from '@/data/OLLCubes'
 import pllCubes from '@/data/PLLCubes'
 import CubeButton from '@/components/button/CubeButton'
@@ -160,14 +160,14 @@ const AlgorithmDetail = ({algoId, onDelete, onEdit, disableDelete, showButtons}:
     setOpen(false)
   }
 
-  const [selected, setSelected] = useState<Selected>()
+  const [selected, setSelected] = useState<SelectedTurn | SelectedGroup>()
 
   return <div>
     <Button variant="raised" onClick={() => setOpen(!open)}><Algorithm algo={algo}/></Button>
     {render && <div ref={detailRef} onTransitionEnd={handleTransitionEnd} className="h-0 transition-[height] overflow-hidden">
       <div ref={contentRef}>
         <div className="p-1"/>
-        <div className="ml-3">
+        <div className="ml-3 relative">
           {algo.info && <>
             <div>{algo.info}</div>
             <div className="p-1"/>
@@ -189,40 +189,84 @@ const AlgorithmDetail = ({algoId, onDelete, onEdit, disableDelete, showButtons}:
   </div>
 }
 
+interface TurnInfoProps<
+  Turn extends Algo.Turn | Algo.TurnGroup,
+> {
+  getTurn: (selected: SelectedTurn | SelectedGroup) => Turn | undefined | false
+  render: (info: NonNullable<Turn["info"]>) => JSX.Element
+}
 interface InfoProps {
-  selected?: Selected
+  selected?: SelectedTurn | SelectedGroup
 }
-const FullHandTurnInfo = ({selected}: InfoProps) => {
-  if (selected?.type !== 'turn' || !isFullHandTurn(selected.turn) || !selected.turn.info)
+const TurnInfo = <
+  Turn extends Algo.Turn | Algo.TurnGroup
+>({getTurn, render}: TurnInfoProps<Turn>) => ({selected}: InfoProps) => {
+  const [show, setShow] = useState(false)
+  const [info, setInfo] = useState<Turn['info']>()
+  const ref = useRef<HTMLDivElement>(null)
+
+
+  const setShowFalse = () => {
+    setShow(false)
+    if (!info || !show)
+      return
+
+    const div = ref.current!
+    div.style.top = `${div.offsetTop}px`
+    div.style.position = 'absolute'
+    div.style.opacity = '0'
+  }
+
+  useEffect(() => {
+    if (!selected)
+      return setShowFalse()
+    const turn = getTurn(selected)
+    if (!turn || !turn.info)
+      return setShowFalse()
+    
+    setInfo(turn.info)
+    setShow(true)
+  }, [selected])
+
+  useEffect(() => {
+    if (!info || !show)
+      return
+    const div = ref.current!
+    div.getBoundingClientRect()
+    div.style.opacity = '1'
+    div.style.position = ''
+  }, [show])
+
+  const handleTransitionEnd = () => {
+    if (show)
+      return
+    setInfo(undefined)
+  }
+
+  if (!info)
     return <></>
 
-  const {info} = selected.turn
-  return (
-    <div>Your thumb should be on the <span className="text-primary">{info.thumbPosition}</span> when starting the turn.</div>
-  )
+  return <div ref={ref} onTransitionEnd={handleTransitionEnd} className="transition-opacity opacity-0">
+    {render(info)}
+  </div>
 }
-const SingleFingerTurnInfo = ({selected}: InfoProps) => {
-  if (selected?.type !== 'turn' || !isSingleFingerTurn(selected.turn) || !selected.turn.info)
-    return <></>
-  
-  const {info} = selected.turn
-  return (
-    <div>Turn with your <span className="text-primary">{info.finger}</span> on your <span className="text-primary">{info.hand}</span>.</div>
-  )
-}
-const SingleFingerDoubleTurnInfo = ({selected}: InfoProps) => {
-  if (selected?.type !== 'turn' || !isSingleFingerDoubleTurn(selected.turn) ||!selected.turn.info)
-    return <></>
 
-  const {info: {first, second}} = selected.turn
-  return <>
-    <div><span className="text-primary">First</span> turn with your <span className="text-primary">{first.finger}</span> on your <span className="text-primary">{first.hand}</span>.</div>
-    <div><span className="text-primary">Second</span> turn with your <span className="text-primary">{second.finger}</span> on your <span className="text-primary">{second.hand}</span>.</div>
-  </>
-}
-const GroupInfo = ({selected}: InfoProps) => {
-  if (selected?.type !== 'group' || !selected.group.info)
-    return <></>
-
-  return <div>{selected.group.info}</div>
-}
+const FullHandTurnInfo = TurnInfo({
+  getTurn: selected => isTurn(selected) && isFullHandTurn(selected.turn) && selected.turn,
+  render: info => <div>Your thumb should be on the <span className="text-primary">{info.thumbPosition}</span> when starting the turn.</div>
+})
+const SingleFingerTurnInfo = TurnInfo({
+  getTurn: selected => isTurn(selected) && isSingleFingerTurn(selected.turn) && selected.turn,
+  render: info => <div>Turn with your <span className="text-primary">{info.finger}</span> on your <span className="text-primary">{info.hand}</span>.</div>
+})
+const SingleFingerDoubleTurnInfo = TurnInfo({
+  getTurn: selected => isTurn(selected) && isSingleFingerDoubleTurn(selected.turn) && selected.turn,
+  render: ({first, second}) => <>
+  <div><span className="text-primary">First</span> turn with your <span className="text-primary">{first.finger}</span> on your <span className="text-primary">{first.hand}</span>.</div>
+  <div><span className="text-primary">Second</span> turn with your <span className="text-primary">{second.finger}</span> on your <span className="text-primary">{second.hand}</span>.</div>
+</>
+})
+const GroupInfo = TurnInfo({
+  getTurn: selected => isGroup(selected) && selected.group,
+  render: info => <div>{info}</div>
+})
