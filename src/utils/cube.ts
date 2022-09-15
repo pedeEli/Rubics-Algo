@@ -3,7 +3,7 @@ export const isOLLSection = (section: string): section is Cube.OLLSection => {
   return ollSectionRegex.test(section)
 }
 
-export const ollNameRegex = /^OLL ([1-9]|[1-4][0-9]|5[1-7])$/
+export const ollNameRegex = /^OLL ([1-9]|[1-4][0-9]|5[0-7])$/
 export const isOLLName = (name: string): name is Cube.OLLName => {
   return ollNameRegex.test(name)
 }

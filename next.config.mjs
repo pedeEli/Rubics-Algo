@@ -1,11 +1,5 @@
 import { env } from "./src/env/server.mjs";
-import withPWAFn from 'next-pwa'
-
-
-const withPWA = withPWAFn({
-  dest: 'public',
-  disable: env.NODE_ENV !== 'production'
-})
+import pkg from './package.json' assert {type: 'json'}
 
 /**
  * Don't be scared of the generics here.
@@ -16,10 +10,13 @@ const withPWA = withPWAFn({
  * @constraint {{import('next').NextConfig}}
  */
 function defineNextConfig(config) {
-  return withPWA(config);
+  return config;
 }
 
 export default defineNextConfig({
   reactStrictMode: false,
   swcMinify: true,
+  generateBuildId: () => {
+    return `rubics-algo-${pkg.version}`
+  }
 });

@@ -5,12 +5,25 @@ import type { AppType } from "next/dist/shared/lib/utils";
 import superjson from "superjson";
 import { SessionProvider } from "next-auth/react";
 import "../styles/globals.css";
-import {Head} from 'next/document'
+import {useEffect} from 'react'
 
 const MyApp: AppType = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
+
+  useEffect(() => {
+    if (typeof window === 'undefined')
+      return
+
+    if ('serviceWorker' in window.navigator) {
+      window.navigator.serviceWorker.register('/sw.js')
+        .catch(console.error)
+      return
+    }
+    console.log('service workers are not supported')
+  }, [])
+
   return (
     <SessionProvider session={session}>
       <Component {...pageProps}/>
