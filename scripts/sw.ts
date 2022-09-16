@@ -15,9 +15,9 @@ const deepFiles = (dir: string): string[] => {
   return files.map(file => {
     const filePath = path.join(dirPath, file)
     if (fs.statSync(filePath).isDirectory()) {
-      return deepFiles(path.join(dir, file)).map(f => path.join(file, f))
+      return deepFiles(path.join(dir, file)).map(f => path.join(encodeURIComponent(file), f))
     }
-    return file
+    return encodeURIComponent(file)
   }).flat()
 }
 
@@ -63,7 +63,7 @@ const compiler = webpack({
       __next_pages__: JSON.stringify(['/', '/oll', '/pll']),
       __next_data__: JSON.stringify([...defaultAlgorithms('oll', OLLData), ...defaultAlgorithms('pll', PLLData)]),
       __public_files__: JSON.stringify(deepFiles('public').filter(file => !file.endsWith('sw.js')).map(file => file.replace(/\\/g, '/'))),
-      id: JSON.stringify('test')
+      id: JSON.stringify('elias')
     })
   ]
 }, (err, stats) => {
