@@ -25,9 +25,12 @@ const deepFiles = (dir: string): string[] => {
 const defaultAlgorithms = (type: 'oll' | 'pll', data: Record<string, Record<string, unknown>>) => {
   return Object.entries(data).map(([section, d]) => {
     return Object.keys(d).map(name => {
-      return `_next/data/${buildId}/${type}/${encodeURIComponent(section)}/${encodeURIComponent(name)}.json?section=${section.replace(/ /g, '+')}&name=${name.replace(/ /g, '+')}`
+      return [
+        `_next/data/${buildId}/${type}/${encodeURIComponent(section)}/${encodeURIComponent(name)}.json?section=${section.replace(/ /g, '+')}&name=${name.replace(/ /g, '+')}`,
+        `${type}/${encodeURIComponent(section)}/${encodeURIComponent(name)}`
+      ]
     })
-  }).flat()
+  }).flat(2)
 }
 
 const compiler = webpack({
@@ -60,7 +63,7 @@ const compiler = webpack({
       __next_pages__: JSON.stringify(['/', '/oll', '/pll']),
       __next_data__: JSON.stringify([...defaultAlgorithms('oll', OLLData), ...defaultAlgorithms('pll', PLLData)]),
       __public_files__: JSON.stringify(deepFiles('public').filter(file => !file.endsWith('sw.js')).map(file => file.replace(/\\/g, '/'))),
-      id: JSON.stringify('iuiuiuiui')
+      id: JSON.stringify('test')
     })
   ]
 }, (err, stats) => {

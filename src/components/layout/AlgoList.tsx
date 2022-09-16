@@ -8,7 +8,7 @@ import IconButton from '@/components/button/IconButton'
 import AddSVG from '@/components/svg/Add'
 import Editor from '@/components/editor'
 
-import {useSession} from 'next-auth/react'
+import {useSession} from '@/utils/hooks'
 import React, {useState, useRef, useEffect} from 'react'
 import {trpc} from '@/utils/trpc'
 

@@ -13,7 +13,6 @@ const publicFiles = __public_files__
 
 const cacheName = `rubics-algo-${id}`
 
-console.log(publicFiles)
 
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
@@ -24,18 +23,30 @@ self.addEventListener('install', event => {
       await caches.delete(key)
     }))
     const cache = await caches.open(cacheName)
-    await cache.addAll([...nextPages, ...nextGenerated, ...nextData, ...publicFiles])
+    await Promise.all([...nextPages, ...nextGenerated, ...nextData, ...publicFiles].map(async file => {
+      const response = await fetch(file, {
+        credentials: 'omit'
+      })
+      await cache.put(file, response)
+    }))
   })())
 })
 
 
-const cacheFirst = async (request: Request) => {
-  const cached = await caches.match(request);
-  if (cached)
-    return cached;
-  return fetch(request);
-};
+const fetchFirst = async (request: Request) => {
+  try {
+    const data = await fetch(request)
+    return data
+  } catch (e) {
+    const cached = await caches.match(request)
+    if (!cached) {
+      console.log(request)
+      throw new Error('not in cache')
+    }
+    return cached
+  }
+}
 
 self.addEventListener("fetch", event => {
-  event.respondWith(cacheFirst(event.request));
-});
+  event.respondWith(fetchFirst(event.request))
+})

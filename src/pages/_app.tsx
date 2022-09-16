@@ -3,7 +3,7 @@ import { withTRPC } from "@trpc/next";
 import type { AppRouter } from "../server/router";
 import type { AppType } from "next/dist/shared/lib/utils";
 import superjson from "superjson";
-import { SessionProvider } from "next-auth/react";
+import { SessionProvider } from "@/utils/hooks";
 import "../styles/globals.css";
 import {useEffect} from 'react'
 
@@ -11,7 +11,6 @@ const MyApp: AppType = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
-
   useEffect(() => {
     if (typeof window === 'undefined')
       return
@@ -32,11 +31,7 @@ const MyApp: AppType = ({
   );
 };
 
-const getBaseUrl = () => {
-  if (typeof window !== "undefined") return ""; // browser should use relative url
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`; // SSR should use vercel url
-  return `http://localhost:${process.env.PORT ?? 3000}`; // dev SSR should use localhost
-};
+import {getBaseUrl} from '@/utils/trpc'
 
 export default withTRPC<AppRouter>({
   config() {
@@ -65,7 +60,7 @@ export default withTRPC<AppRouter>({
 import LoginSVG from '@/components/svg/Login'
 import PersonSVG from '@/components/svg/Person'
 import Fab from '@/components/button/Fab'
-import {useSession} from 'next-auth/react'
+import {useSession} from '@/utils/hooks'
 import {useRouter} from 'next/router'
 
 const Login = () => {
